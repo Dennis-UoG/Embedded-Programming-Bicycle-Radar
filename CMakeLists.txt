@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.27)
+project(bicycle_radar)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+find_library(GPIOD_LIBRARY NAMES gpiod REQUIRED)
+find_package(PkgConfig REQUIRED)
+target_include_directories(bicycle_radar PRIVATE ${Libcamera_INCLUDE_DIRS})
+include_directories(/usr/include)
+add_executable(bicycle_radar src/main.cpp
+        src/led_test.cpp
+        src/imu_driver.cpp
+        src/camera_driver.cpp
+)
+target_link_libraries(bicycle_radar PRIVATE ${GPIOD_LIBRARY})
+target_link_libraries(bicycle_radar PRIVATE ${Libcamera_LIBRARIES})
