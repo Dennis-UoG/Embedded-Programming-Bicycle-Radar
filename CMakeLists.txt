@@ -7,8 +7,9 @@ find_library(GPIOD_LIBRARY NAMES gpiod REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(Libcamera REQUIRED libcamera)
 include_directories(/usr/include)
-add_executable(bicycle_radar src/main.cpp
-        src/led_test.cpp
+add_executable(bicycle_radar
+        src/ToF_driver.cpp
+        src/led_driver.cpp
         src/imu_driver.cpp
         src/camera_driver.cpp
 )

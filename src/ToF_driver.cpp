@@ -7,11 +7,47 @@
 #include <sstream>
 #include <typeinfo>
 #include <thread>
+#include <vector>
+#include <csignal>
 
+
+struct StructLidar {
+    float Temperature;
+    float Dist;
+    int Strength;
+};
+
+void writeCSV(const std::string& filename, const std::vector<StructLidar>& data) {
+    std::ofstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening file!" << std::endl;
+        return;
+    }
+
+    // Write CSV header
+    file << "Temperature,Dist,Strength\n";
+
+    // Write data
+    for (const auto& entry : data) {
+        file << entry.Temperature << "," << entry.Dist << "," << entry.Strength << "\n";
+    }
+
+    file.close();
+    std::cout << "CSV file written successfully: " << filename << std::endl;
+}
+
+bool running = true;
+
+void signalHandler(int signum) {
+    std::cout << "\nCaught signal " << signum << ", exiting gracefully...\n";
+    running = false;
+}
 
 int main() {
+    std::signal(SIGTERM, signalHandler);
     // Replace with your TTY device name
-    const char* portName = "/dev/tty.usbserial-1130";
+    const char* portName = "/dev/ttyUSB0";
     // Open the TTY port
     int serialPort = open(portName, O_RDWR | O_NOCTTY | O_NONBLOCK);
     // if (serialPort == -1) {
@@ -19,11 +55,7 @@ int main() {
     //     return 1;
     // }
     // Configure the port
-    struct StructLidar {
-        float Temperature;
-        float Dist;
-        int Strength;
-    };
+
     struct termios tty;
     int result = tcgetattr(serialPort, &tty);
     if (result < 0) {
@@ -56,10 +88,10 @@ int main() {
         return 0;
     }
     unsigned int mask  = 0;
-
+    std::vector<StructLidar> csv_output;
     // Read data from the port
     char buffer[9];
-    while (true) {
+    while (running) {
         int bytesRead = read(serialPort, buffer, sizeof(buffer));
         if (bytesRead > 0) {
             if (buffer[0] == 0x59 && buffer[1] == 0x59) {
@@ -70,7 +102,8 @@ int main() {
                 temp_structLidar.Temperature = temperature;
                 temp_structLidar.Dist = dist;
                 temp_structLidar.Strength = strength;
-                std::cout << "Temperature: " << temp_structLidar.Temperature << std::endl;
+                std::cout << "Distance: " << temp_structLidar.Dist << std::endl;
+                csv_output.push_back(temp_structLidar);
             }
             else {
                 tcflush(serialPort, TCIFLUSH);
@@ -80,5 +113,6 @@ int main() {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
+    writeCSV("tof_data.csv", csv_output);
     return 0;
 }
