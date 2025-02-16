@@ -47,15 +47,12 @@ void signalHandler(int signum) {
 
 int main() {
     std::signal(SIGTERM, signalHandler);
-    // Replace with your TTY device name
     const char* portName = "/dev/ttyUSB0";
-    // Open the TTY port
-    int serialPort = open(portName, O_RDWR | O_NOCTTY | O_NONBLOCK);
-    // if (serialPort == -1) {
-    //     std::cerr << "Error: Unable to open port " << portName << std::endl;
-    //     return 1;
-    // }
-    // Configure the port
+    int serialPort = open(portName, O_RDWR | O_NOCTTY);
+    if (serialPort == -1) {
+        std::cerr << "Error: Unable to open port " << portName << std::endl;
+        return 1;
+    }
 
     struct termios tty;
     int result = tcgetattr(serialPort, &tty);
@@ -67,20 +64,10 @@ int main() {
     cfsetispeed (&tty, B115200);
     // https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/
     tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
-    // tty.c_cflag |= CREAD;
-    // tty.c_iflag = 0;
-    tty.c_cflag &= ~PARENB;
-    tty.c_cflag |= CREAD | CLOCAL;
-    // tty.c_lflag |= ICANON;
-    // tty.c_lflag &= ~ECHO; // Disable echo
-    // tty.c_lflag &= ~ECHOE; // Disable erasure
-    // tty.c_lflag &= ~ECHONL;
-    // tty.c_lflag &= ~ISIG;
-    tty.c_oflag = 0;
-    // tty.c_lflag = 0;
+    tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
     // http://www.unixwiz.net/techtips/termios-vmin-vtime.html
-    // tty.c_cc[VTIME] = 0;
-    // tty.c_cc[VMIN] = 1;
+    tty.c_cc[VMIN] = 9;
+    tty.c_cc[VTIME] = 0;
 
     result = tcsetattr(serialPort, TCSANOW, &tty);
     if (result < 0)
@@ -95,7 +82,7 @@ int main() {
     char buffer[11];
     while (running) {
         int bytesRead = read(serialPort, buffer, sizeof(buffer));
-        if (bytesRead > 0) {
+        if (bytesRead == 11) {
             if (buffer[0] == 0x55 && buffer[1] == 0x51) {
                 StructImu imu_data = {};
                 float x = (mask | (int8_t (buffer[2]) | int16_t (buffer[3] << 8))) / 32768.0 * 16.0 * 9.8;
@@ -105,16 +92,13 @@ int main() {
                 imu_data.acc_Y = y;
                 imu_data.acc_Z = z;
                 std::cout << "accelerationX: " << imu_data.acc_X << std::endl;
-                csv_output.push_back(imu_data);
+                // csv_output.push_back(imu_data);
             }
             else {
                 tcflush(serialPort, TCIFLUSH);
             }
         }
-        else {
-            std::this_thread::sleep_for(std::chrono::milliseconds(90));
-        }
     }
-    writeCSV("imu_data.csv", csv_output);
+    // writeCSV("imu_data.csv", csv_output);
     return 0;
 }
