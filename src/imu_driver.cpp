@@ -45,7 +45,7 @@ void signalHandler(int signum) {
     running = false;
 }
 
-int IMUThread(void (*func)) {
+int IMUThread(void (*func)()) {
     std::signal(SIGTERM, signalHandler);
     const char* portName = "/dev/ttyUSB0";
     int serialPort = open(portName, O_RDWR | O_NOCTTY);
