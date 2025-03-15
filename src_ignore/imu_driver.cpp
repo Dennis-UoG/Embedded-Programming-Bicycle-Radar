@@ -13,6 +13,8 @@
 #include <vector>
 #include <csignal>
 
+#include "imu_driver.h"
+
 struct StructImu {
     float acc_X;
     float acc_Y;
