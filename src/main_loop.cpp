@@ -11,6 +11,9 @@
 #include <vector>
 #include <csignal>
 
+#include "imu_driver.h"
+
+
 void OnCollision()
 {
     std::cout << "Collision detected!" << std::endl;
