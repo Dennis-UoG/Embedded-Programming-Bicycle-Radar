@@ -44,7 +44,7 @@ void signalHandler(int signum) {
     running = false;
 }
 
-int main() {
+int ToFThread(void (*func)()) {
     std::signal(SIGTERM, signalHandler);
     const char* portName = "/dev/ttyUSB1";
     int serialPort = open(portName, O_RDWR | O_NOCTTY);
