@@ -2,12 +2,10 @@
 // Created by Jiancheng Zhang on 14/02/2025.
 //
 
-#include <libcamera/libcamera.h>
-#include <libcamera/camera.h>
-#include <libcamera-apps/image/image.hpp>
-#include <iostream>
-#include <thread>
-#include <chrono>
+#include "camera_driver.h"
+
+
+static cv::VideoWriter video_writer;
 
 std::string cameraName(libcamera::Camera *camera)
 {
@@ -59,7 +57,7 @@ static void request_callback(libcamera::Request *request)
     }
 }
 
-int main() {
+int CameraMainThread() {
     std::unique_ptr<libcamera::CameraManager> cm = std::make_unique<libcamera::CameraManager>();
 
     cm->start();

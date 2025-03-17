@@ -12,6 +12,8 @@
 #include <csignal>
 
 #include "imu_driver.h"
+#include "camera_driver.h"
+
 
 
 void OnCollision()
@@ -26,6 +28,9 @@ int main()
 {
     std::thread imu_thread(IMUThread, OnCollision);
     imu_thread.detach();
+
+    std::thread camera_thread(CameraMainThread);
+    camera_thread.detach();
 
     return 0;
 }
