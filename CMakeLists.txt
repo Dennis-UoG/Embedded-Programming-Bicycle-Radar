@@ -8,6 +8,7 @@ find_package(PkgConfig REQUIRED)
 find_package(OpenCV REQUIRED)
 pkg_check_modules(Libcamera REQUIRED libcamera)
 include_directories(/usr/include)
+include_directories(/usr/include/rpicam-apps)
 aux_source_directory(./src/ all_src)
 add_executable(bicycle_radar ${all_src})
 
