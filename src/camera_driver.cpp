@@ -53,7 +53,7 @@ static void request_callback(libcamera::Request *request)
             std::cout << plane.bytesused << std::endl;
         }
 
-        png_save(metadata.planes(), bufferPair.first, );
+        //png_save(metadata.planes(), bufferPair.first, );
     }
 }
 
