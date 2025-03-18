@@ -14,7 +14,7 @@
 //#include "imu_driver.h"
 #include "camera_driver.h"
 
-bool running = true;
+bool camera_running = true;
 
 void OnCollision()
 {
