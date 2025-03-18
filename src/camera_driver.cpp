@@ -137,8 +137,10 @@ void clearFolder(const std::string& folderPath) {
 }
 
 int CameraMainThread() {
-    clearFolder(SAVE_FOLDER_PATH);
     std::cout << "Camera Manager started." << std::endl;
+    
+    clearFolder(SAVE_FOLDER_PATH);
+    
 
     std::unique_ptr<libcamera::CameraManager> cm = std::make_unique<libcamera::CameraManager>();
 
