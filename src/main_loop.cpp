@@ -34,6 +34,6 @@ int main()
 
     CameraMainThread();
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    running = false;
+    camera_running = false;
     return 0;
 }

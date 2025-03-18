@@ -13,7 +13,7 @@
 #include <thread>
 #include <chrono>
 
-extern bool running;
+extern bool camera_running;
 int CameraMainThread();
 
 #endif // CAMERA_DRIVER_HPP

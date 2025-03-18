@@ -220,7 +220,7 @@ int CameraMainThread() {
     camera->requestCompleted.connect(request_callback);
 
     camera->start();
-    while(running){
+    while(camera_running){
         for (std::unique_ptr<libcamera::Request> &request : requests){
             camera->queueRequest(request.get());
             request->reuse(libcamera::Request::ReuseBuffers);
