@@ -4,7 +4,7 @@
 
 #include "camera_driver.h"
 
-#define SAVE_FOLDER_PATH string("./frame")
+#define SAVE_FOLDER_PATH std::string("./frame")
 
 std::string cameraName(libcamera::Camera *camera)
 {
