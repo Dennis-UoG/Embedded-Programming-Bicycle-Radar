@@ -4,6 +4,7 @@
 
 #include "camera_driver.h"
 
+#define SAVE_FOLDER_PATH "./frame"
 
 static cv::VideoWriter video_writer;
 
@@ -35,6 +36,64 @@ std::string cameraName(libcamera::Camera *camera)
     return name;
 }
 
+static void saveFrame(const libcamera::FrameMetadata &metadata, const libcamera::FrameBuffer *buffer, libcamera::Stream *stream)
+{
+    auto now = std::chrono::system_clock::now();
+    auto now_time_t = std::chrono::system_clock::to_time_t(now);
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&now_time_t), "%Y%m%d_%H%M%S");
+    std::string timestamp = ss.str();
+
+    std::string filename = SAVE_FOLDER_PATH  + "/frame_" + timestamp + ".png";
+
+    const uint8_t *data = static_cast<const uint8_t *>(buffer->planes()[0].data());
+    int width = stream->configuration().size.width;
+    int height = stream->configuration().size.height;
+
+    FILE *file = fopen(filename.c_str(), "wb");
+    if (!file) {
+        std::cerr << "Failed to open file for writing: " << filename << std::endl;
+        return;
+    }
+
+    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if (!png) {
+        std::cerr << "Failed to create PNG write structure" << std::endl;
+        fclose(file);
+        return;
+    }
+
+    png_infop info = png_create_info_struct(png);
+    if (!info) {
+        std::cerr << "Failed to create PNG info structure" << std::endl;
+        png_destroy_write_struct(&png, nullptr);
+        fclose(file);
+        return;
+    }
+
+    if (setjmp(png_jmpbuf(png))) {
+        std::cerr << "Error during PNG creation" << std::endl;
+        png_destroy_write_struct(&png, &info);
+        fclose(file);
+        return;
+    }
+
+    png_init_io(png, file);
+    png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+
+    png_write_info(png, info);
+    for (int y = 0; y < height; y++) {
+        png_write_row(png, data + y * width * 3);
+    }
+    png_write_end(png, nullptr);
+
+    png_destroy_write_struct(&png, &info);
+    fclose(file);
+
+    std::cout << "Frame saved to " << filename << std::endl;
+}
+
 static void request_callback(libcamera::Request *request)
 {
     if (request->status() == libcamera::Request::RequestCancelled)
@@ -46,18 +105,30 @@ static void request_callback(libcamera::Request *request)
         const libcamera::FrameMetadata &metadata = buffer->metadata();
         std::cout << " seq: " <<  metadata.sequence << " bytesused: ";
 
-
         unsigned int nplane = 0;
         for (const libcamera::FrameMetadata::Plane &plane : metadata.planes())
         {
             std::cout << plane.bytesused << std::endl;
         }
 
-        //png_save(metadata.planes(), bufferPair.first, );
+        saveFrame(metadata, buffer, bufferPair.first);
+    }
+}
+
+void clearFolder(const std::string& folderPath) {
+    if (!std::filesystem::exists(folderPath)) {
+        std::filesystem::create_directory(folderPath);
+    } else {
+        for (const auto& entry : std::filesystem::directory_iterator(folderPath)) {
+            std::filesystem::remove(entry.path());
+        }
     }
 }
 
 int CameraMainThread() {
+    clearFolder(SAVE_FOLDER_PATH);
+    std::cout << "Camera Manager started." << std::endl;
+
     std::unique_ptr<libcamera::CameraManager> cm = std::make_unique<libcamera::CameraManager>();
 
     cm->start();
@@ -136,6 +207,12 @@ int CameraMainThread() {
     camera->requestCompleted.connect(request_callback);
 
     camera->start();
+    while(true){
+        for (std::unique_ptr<libcamera::Request> &request : requests)
+            camera->queueRequest(request.get());
+        //std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    }
     for (std::unique_ptr<libcamera::Request> &request : requests)
         camera->queueRequest(request.get());
 

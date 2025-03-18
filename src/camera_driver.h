@@ -4,10 +4,11 @@
 #include <libcamera/libcamera.h>
 #include <libcamera/camera.h>
 #include <libcamera-apps/image/image.hpp>
-#include <opencv2/opencv.hpp>
 
 
 #include <iostream>
+#include <png.h>
+#include <filesystem>
 #include <thread>
 #include <chrono>
 
