@@ -33,6 +33,7 @@ int main()
     //camera_thread.detach();
 
     CameraMainThread();
-    while(true){}
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    running = false;
     return 0;
 }

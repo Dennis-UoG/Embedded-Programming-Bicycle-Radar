@@ -138,7 +138,7 @@ void clearFolder(const std::string& folderPath) {
 
 int CameraMainThread() {
     std::cout << "Camera Manager started." << std::endl;
-    
+
     clearFolder(SAVE_FOLDER_PATH);
     
 
@@ -220,7 +220,7 @@ int CameraMainThread() {
     camera->requestCompleted.connect(request_callback);
 
     camera->start();
-    while(true){
+    while(running){
         for (std::unique_ptr<libcamera::Request> &request : requests){
             camera->queueRequest(request.get());
             request->reuse(libcamera::Request::ReuseBuffers);

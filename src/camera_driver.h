@@ -13,6 +13,7 @@
 #include <thread>
 #include <chrono>
 
+bool running = true;
 int CameraMainThread();
 
 #endif // CAMERA_DRIVER_HPP
