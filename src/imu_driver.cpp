@@ -40,7 +40,7 @@ void writeCSV(const std::string& filename, const std::vector<StructImu>& data) {
     file.close();
     std::cout << "CSV file written successfully: " << filename << std::endl;
 }
-bool running = true;
+//bool running = true;
 
 void signalHandler(int signum) {
     std::cout << "\nCaught signal " << signum << ", exiting gracefully...\n";
