@@ -1,5 +1,5 @@
-#ifndef CAMERA_DRIVER_HPP
-#define CAMERA_DRIVER_HPP
+#ifndef CAMERA_DRIVER_H
+#define CAMERA_DRIVER_H
 
 #include <libcamera/libcamera.h>
 #include <libcamera/camera.h>
@@ -13,7 +13,7 @@
 #include <thread>
 #include <chrono>
 
-bool running = true;
+extern bool running;
 int CameraMainThread();
 
 #endif // CAMERA_DRIVER_HPP
