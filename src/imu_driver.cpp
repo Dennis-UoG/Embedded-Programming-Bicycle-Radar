@@ -13,6 +13,8 @@
 #include <vector>
 #include <csignal>
 
+#include "imu_driver.h"
+
 struct StructImu {
     float acc_X;
     float acc_Y;
@@ -45,7 +47,7 @@ void signalHandler(int signum) {
     running = false;
 }
 
-int main() {
+int IMUThread(void (*func)()) {
     std::signal(SIGTERM, signalHandler);
     const char* portName = "/dev/ttyUSB0";
     int serialPort = open(portName, O_RDWR | O_NOCTTY);
@@ -92,6 +94,10 @@ int main() {
                 imu_data.acc_Y = y;
                 imu_data.acc_Z = z;
                 std::cout << "accelerationX: " << imu_data.acc_X << std::endl;
+                if(false/*imu_data.acc_X > 10.0 || imu_data.acc_X < -10.0*/) // Threshold for collision detection
+                {
+                    func();
+                }
                 // csv_output.push_back(imu_data);
             }
             else {
