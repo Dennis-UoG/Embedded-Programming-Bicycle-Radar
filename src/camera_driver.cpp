@@ -138,12 +138,6 @@ void clearFolder(const std::string& folderPath) {
 
 int CameraMainThread() {
     std::cout << "Camera Manager started." << std::endl;
-<<<<<<< HEAD
-    
-    clearFolder(SAVE_FOLDER_PATH);
-    
-=======
->>>>>>> 87d3cfec8802e974147d2a914aafb5a23bfa581e
 
     clearFolder(SAVE_FOLDER_PATH);
     
