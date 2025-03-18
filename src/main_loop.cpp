@@ -11,14 +11,14 @@
 #include <vector>
 #include <csignal>
 
-#include "imu_driver.h"
+//#include "imu_driver.h"
 #include "camera_driver.h"
 
 
 
 void OnCollision()
 {
-    std::cout << "Collision detected!" << std::endl;
+    std::cout << "Collision detected" << std::endl;
 
 }
 
