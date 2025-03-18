@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include <sys/mman.h>
 #include <png.h>
 #include <filesystem>
 #include <thread>

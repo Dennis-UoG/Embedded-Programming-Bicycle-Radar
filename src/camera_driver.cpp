@@ -44,7 +44,7 @@ static void saveFrame(const libcamera::FrameMetadata &metadata, const libcamera:
 
     std::string filename = SAVE_FOLDER_PATH  + "/frame_" + timestamp + ".png";
 
-    int fd = buffer->planes()[0].fd();
+    int fd = buffer->planes()[0].fd.get();
     size_t size = buffer->planes()[0].length();
 
     uint8_t *data = static_cast<uint8_t *>(mmap(nullptr, size, PROT_READ, MAP_SHARED, fd, 0));
@@ -219,9 +219,11 @@ int CameraMainThread() {
 
     camera->start();
     while(true){
-        for (std::unique_ptr<libcamera::Request> &request : requests)
+        for (std::unique_ptr<libcamera::Request> &request : requests){
             camera->queueRequest(request.get());
             request->reuse(Request::ReuseBuffers);
+        }
+
         //std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
     }
