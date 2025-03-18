@@ -29,8 +29,8 @@ int main()
     //std::thread imu_thread(IMUThread, OnCollision);
     //imu_thread.detach();
 
-    std::thread camera_thread(CameraMainThread);
-    camera_thread.detach();
+    //std::thread camera_thread(CameraMainThread);
+    //camera_thread.detach();
 
     while(true){}
     return 0;
