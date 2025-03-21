@@ -16,21 +16,26 @@
 
 bool camera_running = true;
 
-void OnCollision()
-{
-    std::cout << "Collision detected" << std::endl;
-
-}
+class OnCollisionCallback : public CallbackInterface {
+    public:
+        void onEvent(int eventId, const std::string& eventData) override {
+            std::cout << "Collision detected! Data = " << eventData << std::endl;
+        }
+};
 
 
 
 int main() 
 {
-    //std::thread imu_thread(IMUThread, OnCollision);
-    //imu_thread.detach();
+    EventTrigger eventTrigger;
+    eventTrigger.addCallback(new OnCollisionCallback());
 
-    std::thread camera_thread(CameraMainThread);
-    camera_thread.detach();
+
+    std::thread imu_thread(IMUThread, eventTrigger);
+    imu_thread.detach();
+
+    //std::thread camera_thread(CameraMainThread);
+    //camera_thread.detach();
     
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     camera_running = false;
