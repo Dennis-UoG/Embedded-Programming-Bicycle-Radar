@@ -11,21 +11,23 @@
 #include <vector>
 #include <csignal>
 
+#include "CallbackInterface.h"
 //#include "imu_driver.h"
 //#include "camera_driver.h"
 
 bool camera_running = true;
+bool test_running = true;
 
 class OnCollisionCallback : public CallbackInterface {
     public:
-        void onEvent(int eventId, const std::string& eventData) override {
+        void onEvent(int eventId, std::string eventData) override {
             std::cout << "Collision detected! Data = " << eventData << std::endl;
         }
 };
 
 class TestCallback : public CallbackInterface {
     public:
-        void onEvent(int eventId, const std::string& eventData) override {
+        void onEvent(int eventId, std::string eventData) override {
             std::cout << "Its a test event! Data = " << eventData << std::endl;
         }
 };
@@ -34,12 +36,13 @@ void test(EventTrigger* eventTrigger){
     std::cout << "Test function called" << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     eventTrigger->triggerEvent(1, "Test data");
+    test_running = false;
 }
 
 int main() 
 {
-    EventTrigger eventTrigger;
-    eventTrigger.addCallback(new OnCollisionCallback());
+    EventTrigger* eventTrigger = new EventTrigger();
+    eventTrigger->addCallback(new TestCallback());
     std::thread test_thread(test, eventTrigger);
     test_thread.detach();
     /*EventTrigger eventTrigger;
@@ -49,8 +52,11 @@ int main()
 
     //std::thread camera_thread(CameraMainThread);
     //camera_thread.detach();
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    while(test_running){
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
+    delete eventTrigger;
     camera_running = false;
     return 0;
 }
