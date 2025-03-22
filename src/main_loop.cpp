@@ -19,14 +19,14 @@ bool camera_running = true;
 
 class OnCollisionCallback : public CallbackInterface {
     public:
-        void onEvent(int eventId, const std::string& eventData) override {
+        void onEvent(int eventId, std::string eventData) override {
             std::cout << "Collision detected! Data = " << eventData << std::endl;
         }
 };
 
 class TestCallback : public CallbackInterface {
     public:
-        void onEvent(int eventId, const std::string& eventData) override {
+        void onEvent(int eventId, std::string eventData) override {
             std::cout << "Its a test event! Data = " << eventData << std::endl;
         }
 };
@@ -40,7 +40,7 @@ void test(EventTrigger* eventTrigger){
 int main() 
 {
     EventTrigger eventTrigger;
-    eventTrigger->addCallback(new TestCallback());
+    eventTrigger.addCallback(new TestCallback());
     std::thread test_thread(test, &eventTrigger);
     test_thread.detach();
     /*EventTrigger eventTrigger;
