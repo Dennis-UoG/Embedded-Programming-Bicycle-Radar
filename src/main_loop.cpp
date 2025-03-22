@@ -16,6 +16,7 @@
 //#include "camera_driver.h"
 
 bool camera_running = true;
+bool test_running = true;
 
 class OnCollisionCallback : public CallbackInterface {
     public:
@@ -35,13 +36,14 @@ void test(EventTrigger* eventTrigger){
     std::cout << "Test function called" << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     eventTrigger->triggerEvent(1, "Test data");
+    test_running = false;
 }
 
 int main() 
 {
-    EventTrigger eventTrigger;
-    eventTrigger.addCallback(new TestCallback());
-    std::thread test_thread(test, &eventTrigger);
+    EventTrigger* eventTrigger = new EventTrigger();
+    eventTrigger->addCallback(new TestCallback());
+    std::thread test_thread(test, eventTrigger);
     test_thread.detach();
     /*EventTrigger eventTrigger;
     eventTrigger.addCallback(new OnCollisionCallback());
@@ -50,8 +52,11 @@ int main()
 
     //std::thread camera_thread(CameraMainThread);
     //camera_thread.detach();
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    while(test_running){
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
+    delete eventTrigger;
     camera_running = false;
     return 0;
 }

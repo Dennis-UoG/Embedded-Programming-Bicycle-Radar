@@ -17,7 +17,12 @@ class CallbackInterface {
 
 class EventTrigger {
     public:
-        
+    
+        ~EventTrigger() {
+            for (auto callback : callbacks) {
+                delete callback;
+            }
+        }
         void addCallback(CallbackInterface* callback) {
             callbacks.push_back(callback);
         }
