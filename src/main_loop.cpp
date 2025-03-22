@@ -39,9 +39,9 @@ void test(EventTrigger* eventTrigger){
 
 int main() 
 {
-    EventTrigger* eventTrigger = new EventTrigger();
+    EventTrigger eventTrigger;
     eventTrigger->addCallback(new TestCallback());
-    std::thread test_thread(test, eventTrigger);
+    std::thread test_thread(test, &eventTrigger);
     test_thread.detach();
     /*EventTrigger eventTrigger;
     eventTrigger.addCallback(new OnCollisionCallback());
