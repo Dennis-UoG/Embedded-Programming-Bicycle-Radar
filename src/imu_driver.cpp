@@ -33,7 +33,7 @@ class IMUSensor{
         
         int Init(){
             std::signal(SIGTERM, signalHandler);
-            serialPort = open(this->portName, O_RDWR | O_NOCTTY);
+            serialPort = open(this->portName.c_str() , O_RDWR | O_NOCTTY);
             if (serialPort == -1) {
                 std::cerr << "Error: Unable to open port " << portName << std::endl;
                 return 1;
