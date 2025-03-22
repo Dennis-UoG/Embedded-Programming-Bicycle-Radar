@@ -12,7 +12,7 @@
 #include <csignal>
 
 //#include "imu_driver.h"
-#include "camera_driver.h"
+//#include "camera_driver.h"
 
 bool camera_running = true;
 
@@ -23,16 +23,29 @@ class OnCollisionCallback : public CallbackInterface {
         }
 };
 
+class TestCallback : public CallbackInterface {
+    public:
+        void onEvent(int eventId, const std::string& eventData) override {
+            std::cout << "Its a test event! Data = " << eventData << std::endl;
+        }
+};
 
+void test(EventTrigger* eventTrigger){
+    std::cout << "Test function called" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    eventTrigger->triggerEvent(1, "Test data");
+}
 
 int main() 
 {
     EventTrigger eventTrigger;
     eventTrigger.addCallback(new OnCollisionCallback());
-
-
+    std::thread test_thread(test, eventTrigger);
+    test_thread.detach();
+    /*EventTrigger eventTrigger;
+    eventTrigger.addCallback(new OnCollisionCallback());
     std::thread imu_thread(IMUThread, eventTrigger);
-    imu_thread.detach();
+    imu_thread.detach();*/
 
     //std::thread camera_thread(CameraMainThread);
     //camera_thread.detach();

@@ -25,8 +25,10 @@ class IMUSensor{
             float acc_Y;
             float acc_Z;
         };
-        IMUSensor(std::string port){
+        IMUSensor(std::string port, EventTrigger* trigger){
             portName = port;
+            eventTrigger = trigger;
+
         }
         
         int Init(){
@@ -113,6 +115,8 @@ class IMUSensor{
         }
     private:
         std::string portName = "";
+        EventTrigger* eventTrigger;
+
         int serialPort = -1;
         void signalHandler(int signum) {
             std::cout << "\nCaught signal " << signum << ", exiting gracefully...\n";
