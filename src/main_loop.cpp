@@ -39,7 +39,7 @@ void test(EventTrigger* eventTrigger){
 
 int main() 
 {
-    EventTrigger* eventTrigger;
+    EventTrigger* eventTrigger = new EventTrigger();
     eventTrigger->addCallback(new TestCallback());
     std::thread test_thread(test, eventTrigger);
     test_thread.detach();
