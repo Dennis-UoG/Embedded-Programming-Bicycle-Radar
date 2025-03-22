@@ -12,7 +12,6 @@
 #include <csignal>
 
 #include "CallbackInterface.h"
-
 //#include "imu_driver.h"
 //#include "camera_driver.h"
 
@@ -40,8 +39,8 @@ void test(EventTrigger* eventTrigger){
 
 int main() 
 {
-    EventTrigger eventTrigger;
-    eventTrigger.addCallback(new TestCallback());
+    EventTrigger* eventTrigger;
+    eventTrigger->addCallback(new TestCallback());
     std::thread test_thread(test, eventTrigger);
     test_thread.detach();
     /*EventTrigger eventTrigger;
