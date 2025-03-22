@@ -33,7 +33,7 @@ class IMUSensor{
         
         int Init(){
             std::signal(SIGTERM, signalHandler);
-            serialPort = open(this.portName, O_RDWR | O_NOCTTY);
+            serialPort = open(this->portName, O_RDWR | O_NOCTTY);
             if (serialPort == -1) {
                 std::cerr << "Error: Unable to open port " << portName << std::endl;
                 return 1;
@@ -100,7 +100,7 @@ class IMUSensor{
                         std::cout << "accelerationX: " << imu_data.acc_X << std::endl;
                         if(false/*imu_data.acc_X > 10.0 || imu_data.acc_X < -10.0*/) // Threshold for collision detection
                         {
-                            eventTrigger->triggerEvent();
+                            eventTrigger->triggerEvent(1, "Test data");
 
                         }
                         // csv_output.push_back(imu_data);
@@ -118,7 +118,7 @@ class IMUSensor{
         EventTrigger* eventTrigger;
 
         int serialPort = -1;
-        void signalHandler(int signum) {
+        static void signalHandler(int signum) {
             std::cout << "\nCaught signal " << signum << ", exiting gracefully...\n";
             running = false;
         }
