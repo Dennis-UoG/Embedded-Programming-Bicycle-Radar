@@ -4,6 +4,7 @@
 #include <libcamera/libcamera.h>
 #include <libcamera/camera.h>
 #include <libcamera-apps/image/image.hpp>
+#include <libyuv.h>
 
 
 #include <iostream>

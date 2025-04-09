@@ -44,29 +44,29 @@ static void saveFrame(const libcamera::FrameMetadata &metadata, const libcamera:
 
     std::string filename = SAVE_FOLDER_PATH  + "/frame_" + timestamp + ".png";
 
-    int fd = buffer->planes()[0].fd.get();
-    size_t size = metadata.planes().size();
-
-    uint8_t *data = static_cast<uint8_t *>(mmap(nullptr, size, PROT_READ, MAP_SHARED, fd, 0));
-    if (data == MAP_FAILED) {
-        std::cerr << "Failed to mmap frame data" << std::endl;
-        return;
-    }
+    const libcamera::FrameBuffer::Plane &plane = buffer->planes().front();
+    uint8_t *imageData = static_cast<uint8_t *>(plane.data);
+    size_t size = plane.length;
+    
+    std::cout << filename << std::endl;
 
     int width = stream->configuration().size.width;
     int height = stream->configuration().size.height;
 
+    uint8_t *rgbData = new uint8_t[width * height * 3];
+    libyuv::ConvertToRGB24(imageData, width, rgbData, width * 3, width, height);
+    //libcamera::Yuv420ToRgb888(data, rgbData, width, height);
     FILE *file = fopen(filename.c_str(), "wb");
     if (!file) {
         std::cerr << "Failed to open file for writing: " << filename << std::endl;
-        munmap(data, size);
+        munmap(rgbData, size);
         return;
     }
 
     png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!png) {
         std::cerr << "Failed to create PNG write structure" << std::endl;
-        munmap(data, size);
+        munmap(rgbData, size);
         fclose(file);
         return;
     }
@@ -74,7 +74,7 @@ static void saveFrame(const libcamera::FrameMetadata &metadata, const libcamera:
     png_infop info = png_create_info_struct(png);
     if (!info) {
         std::cerr << "Failed to create PNG info structure" << std::endl;
-        munmap(data, size);
+        munmap(rgbData, size);
         png_destroy_write_struct(&png, nullptr);
         fclose(file);
         return;
@@ -82,33 +82,42 @@ static void saveFrame(const libcamera::FrameMetadata &metadata, const libcamera:
 
     if (setjmp(png_jmpbuf(png))) {
         std::cerr << "Error during PNG creation" << std::endl;
-        munmap(data, size);
+        munmap(rgbData, size);
         png_destroy_write_struct(&png, &info);
         fclose(file);
         return;
     }
+
+    
 
     png_init_io(png, file);
     png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
 
     png_write_info(png, info);
+    std::cout << "png saving"  << std::endl;
     for (int y = 0; y < height; y++) {
-        png_write_row(png, data + y * width * 3);
+        png_write_row(png, rgbData + y * width * 3);
     }
+    
     png_write_end(png, nullptr);
 
     png_destroy_write_struct(&png, &info);
+
+    
+
     fclose(file);
-    munmap(data, size);
+    delete[] rgbData;
 
     std::cout << "Frame saved to " << filename << std::endl;
 }
 
-static void request_callback(libcamera::Request *request)
-{
+static void request_callback(libcamera::Request *request) {
     if (request->status() == libcamera::Request::RequestCancelled)
+    {
+        std::cout << "canceled" << std::endl;
         return;
+    }
 
     const std::map<const libcamera::Stream *, libcamera::FrameBuffer *> &buffers = request->buffers();
     for (auto bufferPair : buffers) {
@@ -136,7 +145,7 @@ void clearFolder(const std::string& folderPath) {
     }
 }
 
-int CameraMainThread() {
+int main() {
     std::cout << "Camera Manager started." << std::endl;
 
     clearFolder(SAVE_FOLDER_PATH);
@@ -160,7 +169,9 @@ int CameraMainThread() {
     camera->acquire();
 
     std::unique_ptr<libcamera::CameraConfiguration> config =
-        camera->generateConfiguration( { libcamera::StreamRole::StillCapture } );
+    camera->generateConfiguration( { libcamera::StreamRole::StillCapture } );
+
+
 
     libcamera::StreamConfiguration &streamConfig = config->at(0);
     std::cout << "Default viewfinder configuration is: "
@@ -168,6 +179,9 @@ int CameraMainThread() {
 
     streamConfig.size.width = 1920;
     streamConfig.size.height = 1080;
+    
+    libcamera::PixelFormat pixelFormat = streamConfig.pixelFormat;
+    std::cout << "Pixel format: " << pixelFormat.toString() << std::endl;
 
     config->validate();
     std::cout << "Validated viewfinder configuration is: "
@@ -217,22 +231,24 @@ int CameraMainThread() {
         requests.push_back(std::move(request));
     }
     std::cout << "request size" << requests.size() << std::endl;
+
     camera->requestCompleted.connect(request_callback);
 
     camera->start();
-    while(camera_running){
-        for (std::unique_ptr<libcamera::Request> &request : requests){
-            camera->queueRequest(request.get());
-            request->reuse(libcamera::Request::ReuseBuffers);
-        }
-
-        //std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-    }
-    for (std::unique_ptr<libcamera::Request> &request : requests)
+    // while(1){
+    for (std::unique_ptr<libcamera::Request> &request : requests){
         camera->queueRequest(request.get());
+        request->reuse(libcamera::Request::ReuseBuffers);
+    }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    // }
+    /*for (std::unique_ptr<libcamera::Request> &request : requests)
+        camera->queueRequest(request.get());*/
+
+    // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::cout << "finished" << std::endl;
     camera->stop();
 
     allocator->free(stream);
