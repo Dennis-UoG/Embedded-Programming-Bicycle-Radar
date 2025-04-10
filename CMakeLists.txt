@@ -1,17 +1,24 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.21)
 project(bicycle_radar)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+#if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+#endif()
 find_library(GPIOD_LIBRARY NAMES gpiod REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(PNG REQUIRED)
 pkg_check_modules(Libcamera REQUIRED libcamera)
 pkg_check_modules(LIBYUV REQUIRED libyuv)
+include_directories(include)
 include_directories(/usr/include)
+install(DIRECTORY include/${PROJECT_NAME}
+        DESTINATION include)
 include_directories(/usr/include/rpicam-apps)
 aux_source_directory(./src/ all_src)
 add_executable(bicycle_radar ${all_src})
+
 
 target_link_libraries(bicycle_radar PRIVATE ${GPIOD_LIBRARY})
 target_include_directories(bicycle_radar PRIVATE ${Libcamera_INCLUDE_DIRS})
