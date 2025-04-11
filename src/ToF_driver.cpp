@@ -10,44 +10,44 @@
 #include <vector>
 #include <csignal>
 
+#include "bicycle_radar/tof_driver.h"
 
-struct StructLidar {
-    float Temperature;
-    float Dist;
-    int Strength;
-};
+ToFSensor::ToFSensor(std::string port, EventTrigger* trigger){
+    this->portName = port;
+    this->eventTrigger = trigger;
 
-void writeCSV(const std::string& filename, const std::vector<StructLidar>& data) {
+}
+void ToFSensor::writeCSV(const std::string& filename, const std::vector<ToFSensor::StructLidar>& data) {
     std::ofstream file(filename);
-
     if (!file.is_open()) {
         std::cerr << "Error opening file!" << std::endl;
         return;
     }
-
     // Write CSV header
     file << "Temperature,Dist,Strength\n";
-
     // Write data
     for (const auto& entry : data) {
         file << entry.Temperature << "," << entry.Dist << "," << entry.Strength << "\n";
     }
-
     file.close();
     std::cout << "CSV file written successfully: " << filename << std::endl;
 }
 
-bool running = true;
-
-void signalHandler(int signum) {
-    std::cout << "\nCaught signal " << signum << ", exiting gracefully...\n";
-    running = false;
+std::string ToFSensor::serialize(const StructLidar &data) {
+    std::ostringstream oss;
+    oss << data.Temperature << " " << data.Dist << " " << data.Strength;
+    return oss.str();
 }
 
-int ToFThread(void (*func)()) {
-    std::signal(SIGTERM, signalHandler);
-    const char* portName = "/dev/ttyUSB1";
-    int serialPort = open(portName, O_RDWR | O_NOCTTY);
+ToFSensor::StructLidar ToFSensor::deserialize(const std::string& data) {
+    ToFSensor::StructLidar imu;
+    std::istringstream iss(data);
+    iss >> imu.Temperature >> imu.Dist >> imu.Strength;
+    return imu;
+}
+
+int ToFSensor::Init(){
+    int serialPort = open(this->portName.c_str(), O_RDWR | O_NOCTTY);
     if (serialPort == -1) {
         std::cerr << "Error: Unable to open port " << portName << std::endl;
         return 1;
@@ -72,12 +72,16 @@ int ToFThread(void (*func)()) {
     if (result < 0)
     {
         perror ("error in tcsetattr");
-        return 0;
+        return 1;
     }
+    return 0;
+}
 
+int ToFSensor::Run() {
     unsigned int mask  = 0;
+#ifndef DEBUG
     std::vector<StructLidar> csv_output;
-
+#endif
     // Read data from the port
     char buffer[9];
     while (running) {
@@ -91,14 +95,21 @@ int ToFThread(void (*func)()) {
                 temp_structLidar.Temperature = temperature;
                 temp_structLidar.Dist = dist;
                 temp_structLidar.Strength = strength;
+#ifndef DEBUG
                 std::cout << "Distance: " << temp_structLidar.Dist << std::endl;
-                // csv_output.push_back(temp_structLidar);
+                csv_output.push_back(temp_structLidar);
+#endif
+                if (strength > 60) {
+                    eventTrigger->triggerEvent(2, serialize(temp_structLidar));
+                }
             }
             else {
                 tcflush(serialPort, TCIFLUSH);
             }
         }
     }
-    // writeCSV("tof_data.csv", csv_output);
+#ifndef DEBUG
+     writeCSV("tof_data.csv", csv_output);
+#endif
     return 0;
 }

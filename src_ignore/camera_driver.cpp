@@ -1,8 +1,4 @@
-//
-// Created by Jiancheng Zhang on 14/02/2025.
-//
-
-#include "camera_driver.h"
+#include "bicycle_radar/camera_driver.h"
 
 #define SAVE_FOLDER_PATH std::string("./frame")
 
@@ -145,7 +141,7 @@ void clearFolder(const std::string& folderPath) {
     }
 }
 
-int main() {
+int camera_init() {
     std::cout << "Camera Manager started." << std::endl;
 
     clearFolder(SAVE_FOLDER_PATH);
