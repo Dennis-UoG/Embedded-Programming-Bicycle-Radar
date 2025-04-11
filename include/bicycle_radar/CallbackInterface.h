@@ -8,6 +8,8 @@
 #include <chrono>
 #include <vector>
 
+#include <unordered_map>
+
 class CallbackInterface {
     public:
         virtual void onEvent(int eventId, std::string eventData) = 0;

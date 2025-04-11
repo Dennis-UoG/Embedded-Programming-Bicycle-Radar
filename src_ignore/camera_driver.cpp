@@ -141,7 +141,11 @@ void clearFolder(const std::string& folderPath) {
     }
 }
 
+<<<<<<< HEAD:src/camera_driver.cpp
+int main() {
+=======
 int camera_init() {
+>>>>>>> 3db08e914eeccbd93048c2e6e345c4b9a4d7fe46:src_ignore/camera_driver.cpp
     std::cout << "Camera Manager started." << std::endl;
 
     clearFolder(SAVE_FOLDER_PATH);
