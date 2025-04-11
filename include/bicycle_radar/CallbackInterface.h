@@ -13,7 +13,6 @@
 class CallbackInterface {
     public:
         virtual void onEvent(int eventId, std::string eventData) = 0;
-    
         virtual ~CallbackInterface() = default;
 };
 
