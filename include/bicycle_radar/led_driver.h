@@ -28,5 +28,7 @@ class LedDriver {
     int FlashLED();
     int AdjustColourFrequency(float distance);
 
+    ~LedDriver();
+
 };
 #endif //LED_DRIVER_H

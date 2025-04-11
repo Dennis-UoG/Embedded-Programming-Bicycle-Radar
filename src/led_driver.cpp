@@ -48,7 +48,7 @@ int LedDriver::Init() {
 }
 
 int LedDriver::AdjustColourFrequency(float distance) {
-    /*for (const auto& param : this->dist_colour_freq) {
+    for (const auto& param : this->dist_colour_freq) {
         if (distance <= param.first) {
             this->current_colour = param.second.first;
             this->current_freq = param.second.second;
@@ -56,12 +56,12 @@ int LedDriver::AdjustColourFrequency(float distance) {
         }
         this->current_colour = param.second.first;
         this->current_freq = param.second.second;
-    }*/
+    }
     return 0;
 }
 
 int LedDriver::FlashLED() {
-    /*while (running) {
+    while (running) {
         if (!this->current_colour.empty()) {
             gpiod_line *line = this->colour_gpio[this->current_colour];
             long sleeptime = 1 / this->current_freq;
@@ -71,10 +71,12 @@ int LedDriver::FlashLED() {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime/2));
         }
     }
+    return 0;
+}
 
+LedDriver::~LedDriver() {
     for (const auto& param : this->colour_gpio) {
         gpiod_line_release(param.second);
     }
-    gpiod_chip_close(gpiod_chip_open(this->chipname.c_str()));*/
-    return 0;
+    gpiod_chip_close(this->chip);
 }
