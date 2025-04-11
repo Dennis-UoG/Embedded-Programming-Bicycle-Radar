@@ -10,15 +10,18 @@
 #include <thread>
 #include <vector>
 #include <csignal>
+#include <gpiod.h>
+#include "bicycle_radar/led_driver.h"
 
-#include "bicycle_radar/CallbackInterface.h"
+
+/*#include "bicycle_radar/CallbackInterface.h"
 #include "bicycle_radar/Callbacks.h"
 #include "bicycle_radar/imu_driver.h"
 #include "bicycle_radar/tof_driver.h"
-#include "bicycle_radar/led_driver.h"
-#include "bicycle_radar/camera_driver.h"
+#include "bicycle_radar/led_driver.h"*/
+//#include "bicycle_radar/camera_driver.h"
 
-bool camera_running = true;
+/*bool camera_running = true;
 bool test_running = true;
 
 void RunIMUSensor(IMUSensor& imu_sensor) {
@@ -67,19 +70,20 @@ void stop(std::vector<std::thread> workers, IMUSensor& imu_sensor_driver, ToFSen
     for (auto& worker : workers) {
         worker.join();
     }
-}
+}*/
 
 int main() 
 {
     std::string imu_sensor_port = "/dev/ttyUSB0";
     std::string tof_sensor_port = "/dev/ttyUSB1";
-    std::string gpio_chip_name = "/dev/gpiochip0";
+    int gpio_chip_number = 0;
     std::string led_parameter_path = "parameters/led_freq_dist.yaml";
-    std::vector<int> gpio_pins = {20, 21, 26};
+    std::vector<int> *gpio_pins = new std::vector<int> {20, 21, 26};
 
-    LedDriver led_driver(gpio_chip_name, led_parameter_path, gpio_pins);
+    LedDriver *led_driver = new LedDriver(gpio_chip_number, led_parameter_path, gpio_pins);
 
-    RadarCallbacks radar_callbacks(led_driver);
+    led_driver->Init();
+    /*RadarCallbacks radar_callbacks(led_driver);
     CollisionCallbacks collision_callbacks();
 
     EventTrigger* IMUeventTrigger;
@@ -96,6 +100,28 @@ int main()
         std::this_thread::sleep_for(std::chrono::hours(8));
     }
 
-    stop(workers, imu_sensor_driver, tof_sensor_driver, led_driver);
+    stop(workers, imu_sensor_driver, tof_sensor_driver, led_driver);*/
+    /*int pin = 20;
+    struct gpiod_chip *chip = gpiod_chip_open_by_number(0);
+    if (!chip) {
+        perror("Failed to open GPIO chip");
+        return 1;
+    }
+    struct gpiod_line *line = gpiod_chip_get_line(chip, pin);
+    if (!line) {
+        perror("Failed to get GPIO line");
+        gpiod_chip_close(chip);
+        return 1;
+    }
+    if (gpiod_line_request_output(line, "write-thread", 0) < 0) {
+        perror("Failed to request output");
+        gpiod_chip_close(chip);
+        return 1;
+    }
+    gpiod_line_set_value(line, 1);
+    printf("GPIO %d set to: %d\n", pin, 1);
+    sleep(1);
+    gpiod_line_release(line);
+    gpiod_chip_close(chip);*/
     return 0;
 }

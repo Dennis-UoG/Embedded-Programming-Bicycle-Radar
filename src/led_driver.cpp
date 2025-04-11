@@ -1,14 +1,11 @@
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include <yaml-cpp/yaml.h>
+
 
 #include "bicycle_radar/led_driver.h"
 
 
-LedDriver::LedDriver(std::string chipname, std::string filePath, std::vector<int> gpioPins) {
+LedDriver::LedDriver(int chipnumber, std::string filePath, std::vector<int> *gpioPins) {
     this->gpioPins = gpioPins;
-    this->chipname = chipname;
+    this->chipnumber = chipnumber;
     YAML::Node data = YAML::LoadFile(filePath);
 
     for (const auto& color : {"red", "yellow", "green"}) {
@@ -27,14 +24,15 @@ LedDriver::LedDriver(std::string chipname, std::string filePath, std::vector<int
 }
 
 int LedDriver::Init() {
-    gpiod_chip *chip = gpiod_chip_open(this->chipname.c_str());
-    if (!chip) {
-        std::cerr << "Failed to open GPIO chip: " << CHIP_NAME << std::endl;
+    struct gpiod_chip *ichip = gpiod_chip_open_by_number(this->chipnumber);
+    this->chip = ichip;
+    if (!this->chip) {
+        std::cerr << "Failed to open GPIO chip: " << this->chipnumber << std::endl;
         return 1;
     }
 
-    for (int pin: this->gpioPins) {
-        gpiod_line *line = gpiod_chip_get_line(chip, pin);
+    for (int pin: *this->gpioPins) {
+        struct gpiod_line *line = gpiod_chip_get_line(chip, pin);
         if (!line) {
             std::cerr << "Failed to get GPIO line " << pin << std::endl;
         }
@@ -50,7 +48,7 @@ int LedDriver::Init() {
 }
 
 int LedDriver::AdjustColourFrequency(float distance) {
-    for (const auto& param : this->dist_colour_freq) {
+    /*for (const auto& param : this->dist_colour_freq) {
         if (distance <= param.first) {
             this->current_colour = param.second.first;
             this->current_freq = param.second.second;
@@ -58,12 +56,12 @@ int LedDriver::AdjustColourFrequency(float distance) {
         }
         this->current_colour = param.second.first;
         this->current_freq = param.second.second;
-    }
+    }*/
     return 0;
 }
 
 int LedDriver::FlashLED() {
-    while (running) {
+    /*while (running) {
         if (!this->current_colour.empty()) {
             gpiod_line *line = this->colour_gpio[this->current_colour];
             long sleeptime = 1 / this->current_freq;
@@ -77,6 +75,6 @@ int LedDriver::FlashLED() {
     for (const auto& param : this->colour_gpio) {
         gpiod_line_release(param.second);
     }
-    gpiod_chip_close(gpiod_chip_open(this->chipname.c_str()));
+    gpiod_chip_close(gpiod_chip_open(this->chipname.c_str()));*/
     return 0;
 }
