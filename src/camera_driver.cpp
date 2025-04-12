@@ -37,6 +37,16 @@ void CameraSensor::TakePhoto()
 {
     std::string timestamp = get_current_timestamp();
     CameraSensor::CameraCallback camera_callback;
+
+    cv::VideoCapture cap(0);
+    if (!cap.isOpened()) {
+        std::cerr << "Error: Could not open camera." << std::endl;
+        return;
+    }
+    cv::Mat frame;
+    cap >> frame;
+    camera_callback.frame = frame;
+
     this->camera.registerCallback(&camera_callback);
 }
 
