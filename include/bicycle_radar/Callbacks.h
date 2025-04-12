@@ -13,7 +13,7 @@
 class CollisionCallbacks: public CallbackInterface {
     public:
     CollisionCallbacks(CameraSensor *camera_driver);
-    CameraSensor *camera_driver
+    CameraSensor *camera_driver;
     std::string get_current_timestamp();
     void onEvent(int eventId, std::string eventData) override;
 
