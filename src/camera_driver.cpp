@@ -37,17 +37,11 @@ void CameraSensor::TakePhoto()
 {
     std::string timestamp = get_current_timestamp();
     CameraSensor::CameraCallback camera_callback;
-
-    cv::VideoCapture cap(0);
-    if (!cap.isOpened()) {
-        std::cerr << "Error: Could not open camera." << std::endl;
-        return;
-    }
-    cv::Mat frame;
-    cap >> frame;
-    camera_callback.frame = frame;
-
-    this->camera.registerCallback(&camera_callback);
+    camera.registerCallback(&camera_callback);
+//    Libcam2OpenCVSettings settings;
+//    settings.framerate = 1;
+    camera.start();
+    camera.stop();
 }
 
 //void CameraSensor::request_callback(libcamera::Request *request) {
@@ -98,8 +92,7 @@ int CameraSensor::Run() {
     std::cout << "Camera Manager started." << std::endl;
 //    clearFolder(SAVE_FOLDER_PATH);
 
-    this->camera.start();
     std::this_thread::sleep_for(std::chrono::hours(8));
-    this->camera.stop();
+
     return 0;
 }
