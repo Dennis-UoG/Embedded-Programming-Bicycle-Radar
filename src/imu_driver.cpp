@@ -1,6 +1,3 @@
-//
-// Created by Jiancheng Zhang on 10/02/2025.
-//
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,44 +10,15 @@
 #include <vector>
 #include <csignal>
 
-#include "imu_driver.h"
+#include "bicycle_radar/imu_driver.h"
 
-struct StructImu {
-    float acc_X;
-    float acc_Y;
-    float acc_Z;
-};
+IMUSensor::IMUSensor(std::string port, EventTrigger* trigger){
+    this->portName = port;
+    this->eventTrigger = trigger;
 
-void writeCSV(const std::string& filename, const std::vector<StructImu>& data) {
-    std::ofstream file(filename);
-
-    if (!file.is_open()) {
-        std::cerr << "Error opening file!" << std::endl;
-        return;
-    }
-
-    // Write CSV header
-    file << "acc_X,acc_Y,acc_Z\n";
-
-    // Write data
-    for (const auto& entry : data) {
-        file << entry.acc_X << "," << entry.acc_Y << "," << entry.acc_Z << "\n";
-    }
-
-    file.close();
-    std::cout << "CSV file written successfully: " << filename << std::endl;
 }
-bool running = true;
-
-void signalHandler(int signum) {
-    std::cout << "\nCaught signal " << signum << ", exiting gracefully...\n";
-    running = false;
-}
-
-int IMUThread(void (*func)()) {
-    std::signal(SIGTERM, signalHandler);
-    const char* portName = "/dev/ttyUSB0";
-    int serialPort = open(portName, O_RDWR | O_NOCTTY);
+int IMUSensor::Init(){
+    serialPort = open(this->portName.c_str() , O_RDWR | O_NOCTTY);
     if (serialPort == -1) {
         std::cerr << "Error: Unable to open port " << portName << std::endl;
         return 1;
@@ -60,7 +28,7 @@ int IMUThread(void (*func)()) {
     int result = tcgetattr(serialPort, &tty);
     if (result < 0) {
         perror ("error in tcgetattr");
-        return 0;
+        return 1;
     }
     cfsetospeed (&tty, B115200);
     cfsetispeed (&tty, B115200);
@@ -75,10 +43,45 @@ int IMUThread(void (*func)()) {
     if (result < 0)
     {
         perror ("error in tcsetattr");
-        return 0;
+        return 1;
     }
+    return 0;
+}
+
+void IMUSensor::writeCSV(const std::string& filename, const std::vector<IMUSensor::StructImu>& data) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file!" << std::endl;
+        return;
+    }
+    // Write CSV header
+    file << "acc_X,acc_Y,acc_Z\n";
+    // Write data
+    for (const auto& entry : data) {
+        file << entry.acc_X << "," << entry.acc_Y << "," << entry.acc_Z << "\n";
+    }
+    file.close();
+    std::cout << "CSV file written successfully: " << filename << std::endl;
+}
+
+std::string IMUSensor::serialize(const StructImu &data) {
+    std::ostringstream oss;
+    oss << data.acc_X << " " << data.acc_Y << " " << data.acc_Z;
+    return oss.str();
+}
+
+IMUSensor::StructImu IMUSensor::deserialize(const std::string& data) {
+    IMUSensor::StructImu imu;
+    std::istringstream iss(data);
+    iss >> imu.acc_X >> imu.acc_Y >> imu.acc_Z;
+    return imu;
+}
+
+int IMUSensor::Run(){
     int mask  = 0;
+#ifndef DEBUG
     std::vector<StructImu> csv_output;
+#endif
     // Read data from the port
     // https://wit-motion.yuque.com/wumwnr/ltst03/wegquy?#%20《WT61协议》
     char buffer[11];
@@ -93,18 +96,26 @@ int IMUThread(void (*func)()) {
                 imu_data.acc_X = x;
                 imu_data.acc_Y = y;
                 imu_data.acc_Z = z;
+#ifndef DEBUG
                 std::cout << "accelerationX: " << imu_data.acc_X << std::endl;
-                if(false/*imu_data.acc_X > 10.0 || imu_data.acc_X < -10.0*/) // Threshold for collision detection
+                csv_output.push_back(imu_data);
+#endif
+                if(abs(imu_data.acc_Z) > 15.0 || abs(imu_data.acc_Y) > 15.0) // Threshold for collision detection
                 {
-                    func();
+                    eventTrigger->triggerEvent(1, serialize(imu_data));
                 }
-                // csv_output.push_back(imu_data);
             }
             else {
                 tcflush(serialPort, TCIFLUSH);
             }
         }
     }
-    // writeCSV("imu_data.csv", csv_output);
+#ifndef DEBUG
+    writeCSV("imu_data.csv", csv_output);
+#endif
     return 0;
 }
+
+
+
+

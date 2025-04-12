@@ -1,0 +1,9 @@
+red:
+  distance: 10
+  freq: 5
+yellow:
+  distance: 20
+  freq: 5
+green:
+  distance: 35
+  freq: 1
