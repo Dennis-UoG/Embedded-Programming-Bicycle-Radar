@@ -100,7 +100,7 @@ int IMUSensor::Run(){
                 std::cout << "accelerationX: " << imu_data.acc_X << std::endl;
                 csv_output.push_back(imu_data);
 #endif
-                if(abs(imu_data.acc_Z) > 10.0 || abs(imu_data.acc_Y) > 10.0) // Threshold for collision detection
+                if(abs(imu_data.acc_Z) > 15.0 || abs(imu_data.acc_Y) > 15.0) // Threshold for collision detection
                 {
                     eventTrigger->triggerEvent(1, serialize(imu_data));
                 }

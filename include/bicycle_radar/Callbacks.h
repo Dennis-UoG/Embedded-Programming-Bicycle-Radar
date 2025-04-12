@@ -8,11 +8,12 @@
 #include "led_driver.h"
 #include "imu_driver.h"
 #include "tof_driver.h"
-// #include "camera_driver.h"
+#include "camera_driver.h"
 
 class CollisionCallbacks: public CallbackInterface {
     public:
-    CollisionCallbacks();
+    CollisionCallbacks(CameraSensor *camera_driver);
+    CameraSensor *camera_driver
     std::string get_current_timestamp();
     void onEvent(int eventId, std::string eventData) override;
 
@@ -20,8 +21,8 @@ class CollisionCallbacks: public CallbackInterface {
 
 class RadarCallbacks: public CallbackInterface {
     public:
-    RadarCallbacks(LedDriver& led_driver);
-    LedDriver& led_driver;
+    RadarCallbacks(LedDriver *led_driver);
+    LedDriver *led_driver;
     void onEvent(int eventId, std::string eventData) override;
 
 };

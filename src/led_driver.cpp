@@ -40,6 +40,7 @@ int LedDriver::Init() {
             std::cerr << "Failed to request GPIO line for output" << std::endl;
             gpiod_line_release(line);
         }
+        gpiod_line_set_value(line, 1);
         std::string colour = this->pins_colour[pin];
         this->colour_gpio[colour] = line;
     }
@@ -65,9 +66,9 @@ int LedDriver::FlashLED() {
         if (!this->current_colour.empty()) {
             gpiod_line *line = this->colour_gpio[this->current_colour];
             long sleeptime = 1 / this->current_freq;
-            gpiod_line_set_value(line, 1);
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime/2));
             gpiod_line_set_value(line, 0);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime/2));
+            gpiod_line_set_value(line, 1);
             std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime/2));
         }
     }

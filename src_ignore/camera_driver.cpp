@@ -32,7 +32,7 @@ std::string cameraName(libcamera::Camera *camera)
 
 static void saveFrame(const libcamera::FrameMetadata &metadata, const libcamera::FrameBuffer *buffer,const libcamera::Stream *stream)
 {
-    auto now = std::chrono::system_clock::now();
+    /*auto now = std::chrono::system_clock::now();
     auto now_time_t = std::chrono::system_clock::to_time_t(now);
     std::stringstream ss;
     ss << std::put_time(std::localtime(&now_time_t), "%Y%m%d_%H%M%S");
@@ -105,7 +105,7 @@ static void saveFrame(const libcamera::FrameMetadata &metadata, const libcamera:
     fclose(file);
     delete[] rgbData;
 
-    std::cout << "Frame saved to " << filename << std::endl;
+    std::cout << "Frame saved to " << filename << std::endl;*/
 }
 
 static void request_callback(libcamera::Request *request) {
@@ -141,11 +141,7 @@ void clearFolder(const std::string& folderPath) {
     }
 }
 
-<<<<<<< HEAD:src/camera_driver.cpp
-int main() {
-=======
-int camera_init() {
->>>>>>> 3db08e914eeccbd93048c2e6e345c4b9a4d7fe46:src_ignore/camera_driver.cpp
+int CameraMainThread() {
     std::cout << "Camera Manager started." << std::endl;
 
     clearFolder(SAVE_FOLDER_PATH);
