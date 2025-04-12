@@ -18,6 +18,8 @@
 #include <thread>
 #include <chrono>
 
+static std::string SAVE_FOLDER_PATH = "./frame";
+
 class CameraSensor {
 public:
     struct CameraCallback : Libcam2OpenCV::Callback {
@@ -26,9 +28,12 @@ public:
             cv::imwrite(SAVE_FOLDER_PATH, frame);
         }
     };
+<<<<<<< HEAD
     CameraSensor(std::string save_path);
+=======
+    CameraSensor();
+>>>>>>> 2b4cd82780259a7a2e1266a35cfaacff6ca1bb48
     bool running = true;
-    static std::string SAVE_FOLDER_PATH;
     Libcam2OpenCV camera;
     std::string cameraName(libcamera::Camera *camera);
     void TakePhoto();

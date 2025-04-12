@@ -83,10 +83,9 @@ int main()
     int gpio_chip_number = 0;
     std::string led_parameter_path = "parameters/led_freq_dist.yaml";
     std::vector<int> *gpio_pins = new std::vector<int> {20, 21, 26};
-    std::string image_save_path = "./frame";
 
     LedDriver *led_driver = new LedDriver(gpio_chip_number, led_parameter_path, gpio_pins);
-    CameraSensor *camera_driver = new CameraSensor(image_save_path);
+    CameraSensor *camera_driver;
 
     led_driver->Init();
     RadarCallbacks radar_callbacks(led_driver);

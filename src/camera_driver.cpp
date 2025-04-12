@@ -1,10 +1,6 @@
 #include "bicycle_radar/camera_driver.h"
 
 
-CameraSensor::CameraSensor(std::string save_path) {
-    this->SAVE_FOLDER_PATH = save_path;
-}
-
 //std::string CameraSensor::cameraName(libcamera::Camera *camera)
 //{
 //    const libcamera::ControlList &props = camera->properties();
