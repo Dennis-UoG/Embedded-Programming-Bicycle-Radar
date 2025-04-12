@@ -36,31 +36,18 @@ std::string CameraSensor::cameraName(libcamera::Camera *camera)
 void CameraSensor::TakePhoto()
 {
     std::string timestamp = get_current_timestamp();
-    CameraSensor::CameraCallback Camera_Callback;
-    camera.registerCallback(&Camera_Callback);
-    cv::VideoCapture cap(0);
+    CameraSensor::CameraCallback camera_callback;
 
+    cv::VideoCapture cap(0);
     if (!cap.isOpened()) {
         std::cerr << "Error: Could not open camera." << std::endl;
         return;
     }
-
     cv::Mat frame;
     cap >> frame;
+    camera_callback.frame = frame;
 
-    if (frame.empty()) {
-        std::cerr << "Error: Captured empty frame." << std::endl;
-        return;
-    }
-
-    if (cv::imwrite(this->SAVE_FOLDER_PATH, frame)) {
-        std::cout << "Image saved as 'captured_image.jpg'" << std::endl;
-    } else {
-        std::cerr << "Error: Could not save image." << std::endl;
-        return;
-    }
-
-    cap.release();
+    this->camera.registerCallback(&camera_callback);
 }
 
 void CameraSensor::request_callback(libcamera::Request *request) {
@@ -111,8 +98,8 @@ int CameraSensor::Run() {
     std::cout << "Camera Manager started." << std::endl;
 //    clearFolder(SAVE_FOLDER_PATH);
 
-
+    this->camera.start();
     std::this_thread::sleep_for(std::chrono::hours(8));
-
+    this->camera.stop();
     return 0;
 }

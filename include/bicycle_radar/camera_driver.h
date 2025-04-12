@@ -23,19 +23,13 @@ public:
     struct CameraCallback : Libcam2OpenCV::Callback {
         //cv::Window* window = nullptr;
         virtual void hasFrame(const cv::Mat &frame, const libcamera::ControlList &metadata) {
-            for (const auto &ctrl : metadata) {
-                const libcamera::ControlId *id = libcamera::controls::controls.at(ctrl.first);
-                const libcamera::ControlValue &value = ctrl.second;
-
-                std::cout << "\t" << id->name() << " = " << value.toString()
-                      << std::endl;
-            }
-            std::cout << std::endl;
+            cv::imwrite(SAVE_FOLDER_PATH, frame);
         }
     };
     CameraSensor camera_sensor(std::string save_path);
     bool running = true;
-    std::string SAVE_FOLDER_PATH;
+    static std::string SAVE_FOLDER_PATH;
+    Libcam2OpenCV camera;
     std::string cameraName(libcamera::Camera *camera);
     void TakePhoto();
     std::string get_current_timestamp();
