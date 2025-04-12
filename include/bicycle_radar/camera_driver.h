@@ -28,11 +28,7 @@ public:
             cv::imwrite(SAVE_FOLDER_PATH, frame);
         }
     };
-<<<<<<< HEAD
-    CameraSensor(std::string save_path);
-=======
     CameraSensor();
->>>>>>> 2b4cd82780259a7a2e1266a35cfaacff6ca1bb48
     bool running = true;
     Libcam2OpenCV camera;
     std::string cameraName(libcamera::Camera *camera);
