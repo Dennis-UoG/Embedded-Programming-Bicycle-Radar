@@ -36,7 +36,7 @@ int IMUSensor::Init(){
     tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
     tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
     // http://www.unixwiz.net/techtips/termios-vmin-vtime.html
-    tty.c_cc[VMIN] = 9;
+    tty.c_cc[VMIN] = 11;
     tty.c_cc[VTIME] = 0;
 
     result = tcsetattr(serialPort, TCSANOW, &tty);
@@ -97,8 +97,8 @@ int IMUSensor::Run(){
                 imu_data.acc_Y = y;
                 imu_data.acc_Z = z;
 #ifndef DEBUG
-                std::cout << "accelerationX: " << imu_data.acc_X << std::endl;
-                csv_output.push_back(imu_data);
+//                std::cout << "accelerationX: " << imu_data.acc_X << std::endl;
+//                csv_output.push_back(imu_data);
 #endif
                 if(abs(imu_data.acc_Z) > 15.0 || abs(imu_data.acc_Y) > 15.0) // Threshold for collision detection
                 {

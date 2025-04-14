@@ -6,8 +6,6 @@
 
 CollisionCallbacks::CollisionCallbacks(CameraSensor *camera_driver): camera_driver(camera_driver) {}
 
-
-
 void CollisionCallbacks::onEvent(int eventId, std::string eventData) {
     IMUSensor::StructImu imu_data = IMUSensor::deserialize(eventData);
     this->camera_driver->TakePhoto();
