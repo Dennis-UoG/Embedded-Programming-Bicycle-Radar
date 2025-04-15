@@ -47,7 +47,7 @@ ToFSensor::StructLidar ToFSensor::deserialize(const std::string& data) {
 }
 
 int ToFSensor::Init(){
-    int serialPort = open(this->portName.c_str(), O_RDWR | O_NOCTTY);
+    serialPort = open(this->portName.c_str(), O_RDWR | O_NOCTTY);
     if (serialPort == -1) {
         std::cerr << "Error: Unable to open port " << portName << std::endl;
         return 1;
@@ -96,8 +96,7 @@ int ToFSensor::Run() {
                 temp_structLidar.Dist = dist;
                 temp_structLidar.Strength = strength;
 #ifndef DEBUG
-                std::cout << "Distance: " << temp_structLidar.Dist << std::endl;
-                csv_output.push_back(temp_structLidar);
+//                std::cout << "Distance: " << temp_structLidar.Dist << std::endl;
 #endif
                 if (strength > 60) {
                     eventTrigger->triggerEvent(2, serialize(temp_structLidar));

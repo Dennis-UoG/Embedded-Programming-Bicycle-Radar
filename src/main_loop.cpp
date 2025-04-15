@@ -49,12 +49,12 @@ void RunLED(LedDriver *led_driver) {
 
 void RunCamera(CameraSensor *camera_sensor) {
     std::cout << "Starting camera driver..." << std::endl;
-    std::cout << "LED driver is running" << std::endl;
+    std::cout << "Camera driver is running" << std::endl;
     camera_sensor->Run();
 }
 
 std::vector<std::thread*>* start(IMUSensor *imu_sensor_driver, ToFSensor *tof_sensor_driver, LedDriver *led_driver, CameraSensor *camera_sensor) {
-    std::vector<std::thread*> *workers;
+    std::vector<std::thread*> *workers = new std::vector<std::thread*>();
     std::thread imu_thread(RunIMUSensor, imu_sensor_driver);
     workers->push_back(&imu_thread);
     imu_thread.detach();
@@ -112,7 +112,7 @@ httplib::Server svr;
 
 int main() 
 {
-    std::string led_parameter_path = "parameters/led_freq_dist.json";
+    std::string led_parameter_path = "/home/jz76/Embedded-Programming-Bicycle-Radar/parameters/led_freq_dist.yaml";
 
 
     std::ifstream ifs(led_parameter_path);
@@ -175,21 +175,20 @@ int main()
             res.set_content("Failed to read file", "text/plain");
         }
     });
-    /*std::string imu_sensor_port = "/dev/ttyUSB0";
-    std::string tof_sensor_port = "/dev/ttyUSB1";
+    std::string imu_sensor_port = "/dev/ttyUSB0";
+    std::string tof_sensor_port = "/dev/ttyUSB2";
     int gpio_chip_number = 0;
-    
+
     std::vector<int> *gpio_pins = new std::vector<int> {20, 21, 26};
 
     LedDriver *led_driver = new LedDriver(gpio_chip_number, &data, gpio_pins);
     CameraSensor *camera_driver;
 
-    led_driver->Init();
     RadarCallbacks radar_callbacks(led_driver);
     CollisionCallbacks collision_callbacks(camera_driver);
 
-    EventTrigger* IMUeventTrigger;
-    EventTrigger* RadareventTrigger;
+    EventTrigger* IMUeventTrigger = new EventTrigger();
+    EventTrigger* RadareventTrigger = new EventTrigger();
     IMUeventTrigger->addCallback(&collision_callbacks);
     RadareventTrigger->addCallback(&radar_callbacks);
 
@@ -198,9 +197,9 @@ int main()
 
     std::vector<std::thread*> *workers(start(imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver));*/
     svr.listen("0.0.0.0", 8080);
-    /*while (true) {
+    while (true) {
         std::this_thread::sleep_for(std::chrono::hours(8));
-    }*/
+    }
 
     //stop(workers, imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver);
     return 0;
