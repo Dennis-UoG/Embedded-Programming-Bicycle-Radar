@@ -31,7 +31,7 @@
 
 void CameraSensor::TakePhoto()
 {
-  	this->mtx.lock();
+  	std::lock_guard<std::mutex> lock(this->mtx);
     std::string timestamp = get_current_timestamp();
     CameraSensor::CameraCallback camera_callback;
    	this->camera->registerCallback(&camera_callback);
@@ -39,7 +39,7 @@ void CameraSensor::TakePhoto()
 //    settings.framerate = 1;
     this->camera->start();
     this->camera->stop();
-    this->mtx.unlock();
+
 }
 
 //void CameraSensor::request_callback(libcamera::Request *request) {
@@ -90,7 +90,10 @@ int CameraSensor::Run() {
     std::cout << "Camera Manager started." << std::endl;
 //    clearFolder(SAVE_FOLDER_PATH);
 	this->camera = new Libcam2OpenCV();
-    std::this_thread::sleep_for(std::chrono::hours(8));
+        while (running) {
+          std::this_thread::sleep_for(std::chrono::hours(1));
+        }
+
 
     return 0;
 }

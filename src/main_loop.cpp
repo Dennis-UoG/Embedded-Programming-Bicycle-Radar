@@ -182,7 +182,7 @@ int main()
     std::vector<int> *gpio_pins = new std::vector<int> {20, 21, 26};
 
     LedDriver *led_driver = new LedDriver(gpio_chip_number, &data, gpio_pins);
-    CameraSensor *camera_driver;
+    CameraSensor *camera_driver = new CameraSensor();
 
     RadarCallbacks radar_callbacks(led_driver);
     CollisionCallbacks collision_callbacks(camera_driver);

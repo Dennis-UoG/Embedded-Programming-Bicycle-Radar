@@ -26,16 +26,17 @@ public:
     struct CameraCallback : Libcam2OpenCV::Callback {
         //cv::Window* window = nullptr;
         virtual void hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
+            std::string filename = SAVE_FOLDER_PATH + "/frame_" + get_current_timestamp() + ".png";
             cv::imwrite(SAVE_FOLDER_PATH, frame);
         }
     };
-    CameraSensor();
+    ~CameraSensor();
     bool running = true;
     Libcam2OpenCV* camera;
     std::mutex mtx;
     std::string cameraName(libcamera::Camera *camera);
     void TakePhoto();
-    std::string get_current_timestamp();
+    static std::string get_current_timestamp();
     static void request_callback(libcamera::Request *request);
     void clearFolder(const std::string& folderPath);
     int Run();
