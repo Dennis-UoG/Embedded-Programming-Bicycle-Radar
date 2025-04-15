@@ -31,13 +31,14 @@
 
 void CameraSensor::TakePhoto()
 {
+  	std::lock_guard<std::mutex> lock(this->mtx);
     std::string timestamp = get_current_timestamp();
     CameraSensor::CameraCallback camera_callback;
-    camera.registerCallback(&camera_callback);
+    camera->registerCallback(&camera_callback);
 //    Libcam2OpenCVSettings settings;
 //    settings.framerate = 1;
-    camera.start();
-    camera.stop();
+    camera->start();
+    camera->stop();
 }
 
 //void CameraSensor::request_callback(libcamera::Request *request) {
@@ -87,7 +88,7 @@ void CameraSensor::clearFolder(const std::string& folderPath) {
 int CameraSensor::Run() {
     std::cout << "Camera Manager started." << std::endl;
 //    clearFolder(SAVE_FOLDER_PATH);
-
+	this->camera = new Libcam2OpenCV();
     std::this_thread::sleep_for(std::chrono::hours(8));
 
     return 0;

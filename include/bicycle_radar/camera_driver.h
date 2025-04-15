@@ -17,6 +17,7 @@
 #include <filesystem>
 #include <thread>
 #include <chrono>
+#include <mutex>
 
 static std::string SAVE_FOLDER_PATH = "./frame";
 
@@ -30,7 +31,8 @@ public:
     };
     CameraSensor();
     bool running = true;
-    Libcam2OpenCV camera;
+    Libcam2OpenCV* camera;
+    std::mutex mtx;
     std::string cameraName(libcamera::Camera *camera);
     void TakePhoto();
     std::string get_current_timestamp();
