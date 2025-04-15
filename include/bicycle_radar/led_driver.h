@@ -7,14 +7,29 @@
 #include <map>
 #include <thread>
 #include <chrono>
-#include <yaml.h>
+#include <vector>
 
+#include <fstream>
+#include <string>
+#include <unistd.h>
+#include <fcntl.h>
+#include <termios.h>
+#include <sstream>
+#include <typeinfo>
+#include <thread>
+#include <vector>
+#include <csignal>
+#include <gpiod.h>
 
+#include <nlohmann/json.hpp>
+//#include <yaml.h>
+
+using json = nlohmann::json;
 
 class LedDriver {
   public:
     bool running = true;
-    LedDriver(int chipnumber, std::string filePath, std::vector<int> *gpioPins);
+    LedDriver(int chipnumber, json *data, std::vector<int> *gpioPins);
     std::vector<int> *gpioPins;
     int chipnumber;
     struct gpiod_chip *chip;
