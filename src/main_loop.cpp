@@ -112,7 +112,7 @@ httplib::Server svr;
 
 int main() 
 {
-    std::string led_parameter_path = "/home/jz76/Embedded-Programming-Bicycle-Radar/parameters/led_freq_dist.yaml";
+    std::string led_parameter_path = "/home/jz76/Embedded-Programming-Bicycle-Radar/parameters/led_freq_dist.json";
 
 
     std::ifstream ifs(led_parameter_path);
@@ -195,7 +195,7 @@ int main()
     IMUSensor *imu_sensor_driver = new IMUSensor(imu_sensor_port, IMUeventTrigger);
     ToFSensor *tof_sensor_driver = new ToFSensor(tof_sensor_port, RadareventTrigger);
 
-    std::vector<std::thread*> *workers(start(imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver));*/
+    std::vector<std::thread*> *workers(start(imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver));
     svr.listen("0.0.0.0", 8080);
     while (true) {
         std::this_thread::sleep_for(std::chrono::hours(8));
