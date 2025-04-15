@@ -38,37 +38,37 @@
         <div class="layui-form-item">
           <label class="layui-form-label">Red Distance</label>
           <div class="layui-input-block">
-            <input type="number" name="red_distance" required lay-verify="required" placeholder="Enter distance" autocomplete="off" class="layui-input">
+            <input type="number" name="red_distance" id="red_distance" required  placeholder="Enter distance" autocomplete="off" class="layui-input">
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">Red Frequency</label>
           <div class="layui-input-block">
-            <input type="number" name="red_freq" required lay-verify="required" placeholder="Enter frequency" autocomplete="off" class="layui-input">
+            <input type="number" name="red_freq" id="red_freq" required  placeholder="Enter frequency" autocomplete="off" class="layui-input">
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">Yellow Distance</label>
           <div class="layui-input-block">
-            <input type="number" name="yellow_distance" required lay-verify="required" placeholder="Enter distance" autocomplete="off" class="layui-input">
+            <input type="number" name="yellow_distance" id="yellow_distance"  required  placeholder="Enter distance" autocomplete="off" class="layui-input">
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">Yellow Frequency</label>
           <div class="layui-input-block">
-            <input type="number" name="yellow_freq" required lay-verify="required" placeholder="Enter frequency" autocomplete="off" class="layui-input">
+            <input type="number" name="yellow_freq" id="yellow_freq" required  placeholder="Enter frequency" autocomplete="off" class="layui-input">
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">Green Distance</label>
           <div class="layui-input-block">
-            <input type="number" name="green_distance" required lay-verify="required" placeholder="Enter distance" autocomplete="off" class="layui-input">
+            <input type="number" name="green_distance" id="green_distance" required  placeholder="Enter distance" autocomplete="off" class="layui-input">
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">Green Frequency</label>
           <div class="layui-input-block">
-            <input type="number" name="green_freq" required lay-verify="required" placeholder="Enter frequency" autocomplete="off" class="layui-input">
+            <input type="number" name="green_freq" id="green_freq" required  placeholder="Enter frequency" autocomplete="off" class="layui-input">
           </div>
         </div>
         <div class="layui-form-item">
@@ -83,6 +83,37 @@
 </div>
 <script src="./layui/layui.js"></script>
 <script>
+
+function validateParameters(data) {
+  const checkValue = (value, name) => {
+    const parsed = parseInt(value);
+    if (isNaN(parsed) || parsed < 0) {
+      console.error(`Invalid ${name} parameter: ${value}`);
+      return false;
+    }
+    return true;
+  };
+
+  return (
+    checkValue(data.field.red_distance, "red_distance") &&
+    checkValue(data.field.red_freq, "red_freq") &&
+    checkValue(data.field.yellow_distance, "yellow_distance") &&
+    checkValue(data.field.yellow_freq, "yellow_freq") &&
+    checkValue(data.field.green_distance, "green_distance") &&
+    checkValue(data.field.green_freq, "green_freq")
+  );
+}
+fetch('/getpara')
+  .then(response => response.json())
+  .then(data => {
+      document.getElementById('red_distance').value = data.red.distance;
+      document.getElementById('yellow_distance').value = data.yellow.distance;
+      document.getElementById('green_distance').value = data.green.distance;
+      document.getElementById('red_freq').value = data.red.freq;
+      document.getElementById('yellow_freq').value = data.yellow.freq;
+      document.getElementById('green_freq').value = data.green.freq;
+  })
+  .catch(error => console.error('Error fetching parameters:', error));
 layui.use(['element', 'layer', 'form'], function(){
   var element = layui.element;
   var layer = layui.layer;
@@ -91,22 +122,35 @@ layui.use(['element', 'layer', 'form'], function(){
   
   
   form.on('submit(led-config-form)', function(data){
-    var config = {
-      red: {
-        distance: parseInt(data.field.red_distance),
-        freq: parseInt(data.field.red_freq)
-      },
-      yellow: {
-        distance: parseInt(data.field.yellow_distance),
-        freq: parseInt(data.field.yellow_freq)
-      },
-      green: {
-        distance: parseInt(data.field.green_distance),
-        freq: parseInt(data.field.green_freq)
-      }
-    };
-
-    return false; // 阻止表单默认提交
+    if (validateParameters(data))
+    {
+      var config = {
+        red: {
+          distance: parseInt(data.field.red_distance),
+          freq: parseInt(data.field.red_freq)
+        },
+        yellow: {
+          distance: parseInt(data.field.yellow_distance),
+          freq: parseInt(data.field.yellow_freq)
+        },
+        green: {
+          distance: parseInt(data.field.green_distance),
+          freq: parseInt(data.field.green_freq)
+        }
+      };
+      fetch('/updatepara', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      })
+      .then(response => response.text())
+      .then(message => alert(message))
+      .catch(error => console.error('Error updating parameters:', error));
+      return false;
+    }
+    return false;
   });
 });
 </script>
