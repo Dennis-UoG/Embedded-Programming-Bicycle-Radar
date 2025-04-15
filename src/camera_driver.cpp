@@ -31,14 +31,15 @@
 
 void CameraSensor::TakePhoto()
 {
-  	std::lock_guard<std::mutex> lock(this->mtx);
+  	this->mtx.lock();
     std::string timestamp = get_current_timestamp();
     CameraSensor::CameraCallback camera_callback;
-    camera->registerCallback(&camera_callback);
+   	this->camera->registerCallback(&camera_callback);
 //    Libcam2OpenCVSettings settings;
 //    settings.framerate = 1;
-    camera->start();
-    camera->stop();
+    this->camera->start();
+    this->camera->stop();
+    this->mtx.unlock();
 }
 
 //void CameraSensor::request_callback(libcamera::Request *request) {
