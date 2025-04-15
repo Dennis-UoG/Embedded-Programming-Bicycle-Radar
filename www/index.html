@@ -2,40 +2,22 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>layout</title>
+  <title>Config</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="//unpkg.com/layui@2.9.23/dist/css/layui.css" rel="stylesheet">
+  <link href="./layui/css/layui.css" rel="stylesheet">
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
-    <div class="layui-logo layui-hide-xs layui-bg-black">layout demo</div>
+    <div class="layui-logo layui-hide-xs layui-bg-black">Settings</div>
     <ul class="layui-nav layui-layout-left">
       <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
         <i class="layui-icon layui-icon-spread-left"></i>
       </li>
-      <li class="layui-nav-item layui-hide-xs"><a href="javascript:;">nav 1</a></li>
-      <li class="layui-nav-item layui-hide-xs"><a href="javascript:;">nav 2</a></li>
-      <li class="layui-nav-item layui-hide-xs"><a href="javascript:;">nav 3</a></li>
-      <li class="layui-nav-item">
-        <a href="javascript:;">nav groups</a>
-        <dl class="layui-nav-child">
-          <dd><a href="javascript:;">menu 11</a></dd>
-          <dd><a href="javascript:;">menu 22</a></dd>
-          <dd><a href="javascript:;">menu 33</a></dd>
-        </dl>
-      </li>
     </ul>
     <ul class="layui-nav layui-layout-right">
-      <li class="layui-nav-item layui-hide layui-show-sm-inline-block">
-        <dl class="layui-nav-child">
-          <dd><a href="javascript:;">Your Profile</a></dd>
-          <dd><a href="javascript:;">Settings</a></dd>
-          <dd><a href="javascript:;">Sign out</a></dd>
-        </dl>
-      </li>
       <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
         <a href="javascript:;">
           <i class="layui-icon layui-icon-more-vertical"></i>
@@ -46,44 +28,130 @@
   <div class="layui-side layui-bg-black">
     <div class="layui-side-scroll">
       <ul class="layui-nav layui-nav-tree" lay-filter="test">
-        <li class="layui-nav-item layui-nav-itemed">
-          <a class="" href="javascript:;">menu group 1</a>
-          <dl class="layui-nav-child">
-            <dd><a href="javascript:;">menu 1</a></dd>
-            <dd><a href="javascript:;">menu 2</a></dd>
-            <dd><a href="javascript:;">menu 3</a></dd>
-            <dd><a href="javascript:;">the links</a></dd>
-          </dl>
-        </li>
-        <li class="layui-nav-item">
-          <a href="javascript:;">menu group 2</a>
-          <dl class="layui-nav-child">
-            <dd><a href="javascript:;">list 1</a></dd>
-            <dd><a href="javascript:;">list 2</a></dd>
-          </dl>
-        </li>
-        <li class="layui-nav-item"><a href="javascript:;">click menu item</a></li>
-        <li class="layui-nav-item"><a href="javascript:;">the links</a></li>
+        <li class="layui-nav-item"><a href="javascript:;">LED Settings</a></li>
       </ul>
     </div>
   </div>
   <div class="layui-body">
     <div style="padding: 15px;">
-      
+      <form class="layui-form" id="led-config-form">
+        <div class="layui-form-item">
+          <label class="layui-form-label">Red Distance</label>
+          <div class="layui-input-block">
+            <input type="number" name="red_distance" id="red_distance" required  placeholder="Enter distance" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">Red Frequency</label>
+          <div class="layui-input-block">
+            <input type="number" name="red_freq" id="red_freq" required  placeholder="Enter frequency" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">Yellow Distance</label>
+          <div class="layui-input-block">
+            <input type="number" name="yellow_distance" id="yellow_distance"  required  placeholder="Enter distance" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">Yellow Frequency</label>
+          <div class="layui-input-block">
+            <input type="number" name="yellow_freq" id="yellow_freq" required  placeholder="Enter frequency" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">Green Distance</label>
+          <div class="layui-input-block">
+            <input type="number" name="green_distance" id="green_distance" required  placeholder="Enter distance" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">Green Frequency</label>
+          <div class="layui-input-block">
+            <input type="number" name="green_freq" id="green_freq" required  placeholder="Enter frequency" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="led-config-form">Save</button>
+            <button type="reset" class="layui-btn layui-btn-primary">Reset</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>
- 
-<script src="//unpkg.com/layui@2.9.23/dist/layui.js"></script>
+<script src="./layui/layui.js"></script>
 <script>
-//JS 
-layui.use(['element', 'layer', 'util'], function(){
+
+function validateParameters(data) {
+  const checkValue = (value, name) => {
+    const parsed = parseInt(value);
+    if (isNaN(parsed) || parsed < 0) {
+      console.error(`Invalid ${name} parameter: ${value}`);
+      return false;
+    }
+    return true;
+  };
+
+  return (
+    checkValue(data.field.red_distance, "red_distance") &&
+    checkValue(data.field.red_freq, "red_freq") &&
+    checkValue(data.field.yellow_distance, "yellow_distance") &&
+    checkValue(data.field.yellow_freq, "yellow_freq") &&
+    checkValue(data.field.green_distance, "green_distance") &&
+    checkValue(data.field.green_freq, "green_freq")
+  );
+}
+fetch('/getpara')
+  .then(response => response.json())
+  .then(data => {
+      document.getElementById('red_distance').value = data.red.distance;
+      document.getElementById('yellow_distance').value = data.yellow.distance;
+      document.getElementById('green_distance').value = data.green.distance;
+      document.getElementById('red_freq').value = data.red.freq;
+      document.getElementById('yellow_freq').value = data.yellow.freq;
+      document.getElementById('green_freq').value = data.green.freq;
+  })
+  .catch(error => console.error('Error fetching parameters:', error));
+layui.use(['element', 'layer', 'form'], function(){
   var element = layui.element;
   var layer = layui.layer;
-  var util = layui.util;
+  var form = layui.form;
   var $ = layui.$;
   
   
+  form.on('submit(led-config-form)', function(data){
+    if (validateParameters(data))
+    {
+      var config = {
+        red: {
+          distance: parseInt(data.field.red_distance),
+          freq: parseInt(data.field.red_freq)
+        },
+        yellow: {
+          distance: parseInt(data.field.yellow_distance),
+          freq: parseInt(data.field.yellow_freq)
+        },
+        green: {
+          distance: parseInt(data.field.green_distance),
+          freq: parseInt(data.field.green_freq)
+        }
+      };
+      fetch('/updatepara', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      })
+      .then(response => response.text())
+      .then(message => alert(message))
+      .catch(error => console.error('Error updating parameters:', error));
+      return false;
+    }
+    return false;
+  });
 });
 </script>
 </body>

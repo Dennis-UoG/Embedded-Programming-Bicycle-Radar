@@ -3,19 +3,17 @@
 #include "bicycle_radar/led_driver.h"
 
 
-LedDriver::LedDriver(int chipnumber, std::string filePath, std::vector<int> *gpioPins) {
+LedDriver::LedDriver(int chipnumber, json *data, std::vector<int> *gpioPins) {
     this->gpioPins = gpioPins;
     this->chipnumber = chipnumber;
-    YAML::Node data = YAML::LoadFile(filePath);
-
     for (const auto& color : {"red", "yellow", "green"}) {
-        if (data[color]) {
-            float distance = data[color]["distance"].as<float>();
-            int freq = data[color]["freq"].as<int>();
+        if (data->contains(color)) { // 检查颜色是否存在
+            float distance = (*data)[color]["distance"].get<float>();
+            int freq = (*data)[color]["freq"].get<int>();
             std::pair<float, int> dist_freq = {distance, freq};
             this->parameters[color] = dist_freq;
         } else {
-            std::cout << color << " not found in YAML file.\n";
+            std::cout << color << " not found in JSON file.\n";
         }
     }
     for (const auto& param : this->parameters) {
