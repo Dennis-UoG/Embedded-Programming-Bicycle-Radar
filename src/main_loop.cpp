@@ -114,7 +114,6 @@ int main()
 {
     std::string led_parameter_path = "/home/jz76/Embedded-Programming-Bicycle-Radar/parameters/led_freq_dist.json";
 
-
     std::ifstream ifs(led_parameter_path);
     json data = json::parse(ifs);
     //YAML::Node *data = YAML::LoadFile(led_parameter_path);
@@ -201,6 +200,6 @@ int main()
         std::this_thread::sleep_for(std::chrono::hours(8));
     }
 
-    //stop(workers, imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver);
+    stop(workers, imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver);
     return 0;
 }
