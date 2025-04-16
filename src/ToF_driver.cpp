@@ -96,7 +96,7 @@ int ToFSensor::Run() {
                 temp_structLidar.Dist = dist;
                 temp_structLidar.Strength = strength;
 #ifndef DEBUG
-                std::cout << "Distance: " << temp_structLidar.Dist << std::endl;
+//                std::cout << "Distance: " << temp_structLidar.Dist << std::endl;
 #endif
                 if (strength > 60) {
                     eventTrigger->triggerEvent(2, serialize(temp_structLidar));

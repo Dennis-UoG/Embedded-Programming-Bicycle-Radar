@@ -97,7 +97,7 @@ int IMUSensor::Run(){
                 imu_data.acc_Y = y;
                 imu_data.acc_Z = z;
 #ifndef DEBUG
-                std::cout << "accelerationY: " << imu_data.acc_Y << std::endl;
+//                std::cout << "accelerationY: " << imu_data.acc_Y << std::endl;
 //                csv_output.push_back(imu_data);
 #endif
                 if(abs(imu_data.acc_Z) > 15.0 || abs(imu_data.acc_Y) > 15.0) // Threshold for collision detection
