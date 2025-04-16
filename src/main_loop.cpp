@@ -201,6 +201,6 @@ int main()
         std::this_thread::sleep_for(std::chrono::hours(8));
     }
 
-    //stop(workers, imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver);
+    stop(workers, imu_sensor_driver, tof_sensor_driver, led_driver, camera_driver);
     return 0;
 }
