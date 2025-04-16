@@ -1,3 +1,6 @@
 # Introduction
 
 ### build
+
+cmake.
+make
