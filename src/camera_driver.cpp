@@ -1,65 +1,12 @@
 #include "bicycle_radar/camera_driver.h"
 
 
-//std::string CameraSensor::cameraName(libcamera::Camera *camera)
-//{
-//    const libcamera::ControlList &props = camera->properties();
-//    std::string name;
-//
-//    const auto &location = props.get(libcamera::properties::Location);
-//    if (location) {
-//        switch (*location) {
-//            case libcamera::properties::CameraLocationFront:
-//                name = "Internal front camera";
-//            break;
-//            case libcamera::properties::CameraLocationBack:
-//                name = "Internal back camera";
-//            break;
-//            case libcamera::properties::CameraLocationExternal:
-//                name = "External camera";
-//            const auto &model = props.get(libcamera::properties::Model);
-//            if (model)
-//                name = " '" + *model + "'";
-//            break;
-//        }
-//    }
-//
-//    name += " (" + camera->id() + ")";
-//
-//    return name;
-//}
-
 void CameraSensor::TakePhoto()
 {
     std::lock_guard<std::mutex> lock(this->mtx);
     std::string timestamp = get_current_timestamp();
     this->takephoto = true;
-
-
 }
-
-//void CameraSensor::request_callback(libcamera::Request *request) {
-//    if (request->status() == libcamera::Request::RequestCancelled)
-//    {
-//        std::cout << "canceled" << std::endl;
-//        return;
-//    }
-//
-//    const std::map<const libcamera::Stream *, libcamera::FrameBuffer *> &buffers = request->buffers();
-//    for (auto bufferPair : buffers) {
-//        libcamera::FrameBuffer *buffer = bufferPair.second;
-//        const libcamera::FrameMetadata &metadata = buffer->metadata();
-//        std::cout << " seq: " <<  metadata.sequence << " bytesused: ";
-//
-//        unsigned int nplane = 0;
-//        for (const libcamera::FrameMetadata::Plane &plane : metadata.planes())
-//        {
-//            std::cout << plane.bytesused << std::endl;
-//        }
-//
-//        saveFrame(metadata, buffer, bufferPair.first);
-//    }
-//}
 
 std::string CameraSensor::get_current_timestamp() {
     auto now = std::chrono::system_clock::now();
@@ -82,7 +29,6 @@ void CameraSensor::clearFolder(const std::string& folderPath) {
     }
 }
 
-
 CameraSensor::CameraSensor() {
     this->camera = new Libcam2OpenCV();
     CameraCallback* camera_callback = new CameraCallback();
@@ -93,7 +39,6 @@ CameraSensor::CameraSensor() {
 CameraSensor::~CameraSensor() {
     this->camera->stop();
 }
-
 
 int CameraSensor::Run() {
     std::cout << "Camera Manager started." << std::endl;
