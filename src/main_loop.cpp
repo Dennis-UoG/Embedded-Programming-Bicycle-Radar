@@ -173,17 +173,29 @@ int main()
         }
         res.set_content(result.dump(), "application/json");
     });
+    svr.Get(R"(/frame/.*)", [](const httplib::Request& req, httplib::Response& res) {
+        std::string basePath = "./frame";
+        std::string requestedPath = req.path;
+        fs::path fullPath = fs::canonical(basePath + requestedPath);
+        if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
+            res.status = 404;
+            res.set_content("File not found", "text/plain");
+            return;
+        }
+    
+        std::string content = readFile(fullPath.string());
+        if (!content.empty()) {
+            res.set_content(content, getMimeType(fullPath.string()));
+        } else {
+            res.status = 500;
+            res.set_content("Failed to read file", "text/plain");
+        }
+    });
     svr.Get(R"(/.*)", [](const httplib::Request& req, httplib::Response& res) {
         std::string basePath = "./www";
         std::string requestedPath = req.path;
 
         fs::path fullPath = fs::canonical(basePath + requestedPath);
-
-        if (fullPath.string().find(fs::canonical(basePath).string()) != 0) {
-            res.status = 403;
-            res.set_content("Forbidden: Access outside of www directory", "text/plain");
-            return;
-        }
 
         if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
             res.status = 404;
