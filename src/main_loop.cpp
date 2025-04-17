@@ -83,7 +83,7 @@ void stop(std::vector<std::thread*> *workers, IMUSensor *imu_sensor_driver, ToFS
 std::string readFile(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << filePath << std::endl;
+        std::cout << "Failed to open file: " << filePath << std::endl;
         return "";
     }
 
@@ -92,6 +92,26 @@ std::string readFile(const std::string& filePath) {
     file.close();
 
     return buffer.str();
+}
+
+std::vector<uint8_t> readFileB(const std::string& filePath) {
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filePath << std::endl;
+        return {};
+    }
+    file.seekg(0, std::ios::end);
+    std::streamsize fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<uint8_t> buffer(fileSize);
+    if (!file.read(reinterpret_cast<char*>(buffer.data()), fileSize)) {
+        std::cerr << "Failed to read file: " << filePath << std::endl;
+        return {};
+    }
+
+    file.close();
+    return buffer;
 }
 
 std::string getMimeType(const std::string& filePath) {
@@ -183,9 +203,9 @@ int main()
             return;
         }
     
-        std::string content = readFile(fullPath.string());
+        std::vector<uint8_t> content = readFile(fullPath.string());
         if (!content.empty()) {
-            res.set_content(content, getMimeType(fullPath.string()));
+            res.set_content(reinterpret_cast<char*>(content.data()), content.size(), getMimeType(fullPath.string()));
         } else {
             res.status = 500;
             res.set_content("Failed to read file", "text/plain");
