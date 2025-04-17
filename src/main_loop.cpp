@@ -223,7 +223,7 @@ int main()
             return;
         }
 
-        std::string content = readFile(fullPath.string());
+        std::string content = readFileB(fullPath.string());
         if (!content.empty()) {
             res.set_content(content, getMimeType(fullPath.string()));
         } else {
