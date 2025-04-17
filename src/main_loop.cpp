@@ -152,7 +152,7 @@ int main()
  
         json result = json::array();
         if (!std::filesystem::exists(folderPath)) {
-            std::cerr << "Folder does not exist: " << folderPath << std::endl;
+            std::cout << "Folder does not exist: " << folderPath << std::endl;
             return;
         }
 
