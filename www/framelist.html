@@ -44,6 +44,7 @@
 layui.use(['table'], function(){
   var table = layui.table;
   var form = layui.form;
+  
   fetch('/framelist')
     .then(response => response.json())
     .then(data => {
@@ -54,6 +55,11 @@ layui.use(['table'], function(){
         } else {
             table.render({
                 elem: '#frame-table',
+                page: {
+                    count: 100,
+                    prev: false,
+                    next: false
+                },
                 cols: [[
                     {field: 'filename', title: 'filename', width: 200},
                     {field: 'size', title: 'size', width: 120, sort: true},
