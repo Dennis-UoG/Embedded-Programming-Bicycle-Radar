@@ -203,7 +203,7 @@ int main()
             return;
         }
     
-        std::vector<uint8_t> content = readFile(fullPath.string());
+        std::vector<uint8_t> content = readFileB(fullPath.string());
         if (!content.empty()) {
             res.set_content(reinterpret_cast<char*>(content.data()), content.size(), getMimeType(fullPath.string()));
         } else {
@@ -223,7 +223,7 @@ int main()
             return;
         }
 
-        std::string content = readFileB(fullPath.string());
+        std::string content = readFile(fullPath.string());
         if (!content.empty()) {
             res.set_content(content, getMimeType(fullPath.string()));
         } else {
