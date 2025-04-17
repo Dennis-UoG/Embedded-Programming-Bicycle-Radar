@@ -147,7 +147,32 @@ int main()
             res.set_content("File not found", "text/plain");
         }
     });
+    svr.Get("/framelist", [](const httplib::Request& req, httplib::Response& res) {
+        std::string folderPath = "./frame/";
+ 
+        json result = json::array();
+        if (!std::filesystem::exists(folderPath)) {
+            std::cerr << "Folder does not exist: " << folderPath << std::endl;
+            return;
+        }
 
+        for (const auto& entry : std::filesystem::directory_iterator(folderPath)) {
+            if (entry.is_regular_file()) {
+                std::string filename = entry.path().filename().string();
+                std::string extension = entry.path().extension().string();
+                std::string mime_type = getMimeType(entry.path().string());
+                if (mime_type.find("image/") != std::string::npos) {
+                    json file_info = {
+                        {"filename", filename},
+                        {"size", entry.file_size()},
+                        {"mime_type", mime_type}
+                    };
+                    result.push_back(file_info);
+                }
+            }
+        }
+        res.set_content(result.dump(), "application/json");
+    });
     svr.Get(R"(/.*)", [](const httplib::Request& req, httplib::Response& res) {
         std::string basePath = "./www";
         std::string requestedPath = req.path;
