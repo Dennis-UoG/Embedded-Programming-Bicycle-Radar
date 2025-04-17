@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Config</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="./layui/css/layui.css" rel="stylesheet">
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo layui-hide-xs layui-bg-black">Settings</div>
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
+        <i class="layui-icon layui-icon-spread-left"></i>
+      </li>
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
+        <a href="javascript:;">
+          <i class="layui-icon layui-icon-more-vertical"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree" lay-filter="test">
+        <li class="layui-nav-item"><a href="javascript:;">Camera frame list</a></li>
+        <li class="layui-nav-item"><a href="./index.html">LED Settings</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="layui-body">
+    <div style="padding: 15px;">
+        <table class="layui-hide" id="frame-table"></table>
+    </div>
+  </div>
+</div>
+<script src="./layui/layui.js"></script>
+<script>
+layui.use(['table'], function(){
+  var table = layui.table;
+  var form = layui.form;
+  fetch('/framelist')
+    .then(response => response.json())
+    .then(data => {
+        table.render({
+            elem: '#frame-table',
+            cols: [[
+                {field: 'filename', title: 'filename', width: 200},
+                {field: 'size', title: 'size', width: 120, sort: true},
+                {field: 'mime_type', title: 'MIME', width: 150}
+            ]],
+            data: data,
+            page: true,
+            limits: [5, 10, 15],
+            limit: 5
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching frame list:', error);
+    });
+});
+</script>
+</body>
+</html>
