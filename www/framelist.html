@@ -61,7 +61,9 @@ layui.use(['table'], function(){
                     next: false
                 },
                 cols: [[
-                    {field: 'filename', title: 'filename', width: 200},
+                    {field: 'filename', title: 'filename', width: 200, templet: function(d) {
+                        return `<a href="./frame/${d.filename}" target="_blank">${d.filename}</a>`;
+                    }},
                     {field: 'size', title: 'size', width: 120, sort: true},
                     {field: 'mime_type', title: 'MIME', width: 150}
                 ]],
