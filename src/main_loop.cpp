@@ -146,7 +146,7 @@ int main()
             json new_data = json::parse(req.body);
             data = new_data;
             std::ofstream ofs("parameters/led_freq_dist.json");
-            ofs << data.dump(4);
+            ofs << data.dump();
             ofs.close();
 
             res.set_content("Parameters updated successfully!", "text/plain");
@@ -193,24 +193,7 @@ int main()
         }
         res.set_content(result.dump(), "application/json");
     });
-    svr.Get(R"(/frame/.*)", [](const httplib::Request& req, httplib::Response& res) {
-        std::string basePath = "./frame";
-        std::string requestedPath = req.path;
-        fs::path fullPath = fs::canonical(basePath + requestedPath);
-        if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
-            res.status = 404;
-            res.set_content("File not found", "text/plain");
-            return;
-        }
-    
-        std::vector<uint8_t> content = readFileB(fullPath.string());
-        if (!content.empty()) {
-            res.set_content(reinterpret_cast<char*>(content.data()), content.size(), getMimeType(fullPath.string()));
-        } else {
-            res.status = 500;
-            res.set_content("Failed to read file", "text/plain");
-        }
-    });
+
     svr.Get(R"(/.*)", [](const httplib::Request& req, httplib::Response& res) {
         std::string basePath = "./www";
         std::string requestedPath = req.path;
@@ -226,6 +209,24 @@ int main()
         std::string content = readFile(fullPath.string());
         if (!content.empty()) {
             res.set_content(content, getMimeType(fullPath.string()));
+        } else {
+            res.status = 500;
+            res.set_content("Failed to read file", "text/plain");
+        }
+    });
+    svr.Get(R"(/frame/.*)", [](const httplib::Request& req, httplib::Response& res) {
+        std::string basePath = "./frame";
+        std::string requestedPath = req.path;
+        fs::path fullPath = fs::canonical(basePath + requestedPath);
+        if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
+            res.status = 404;
+            res.set_content("File not found", "text/plain");
+            return;
+        }
+    
+        std::vector<uint8_t> content = readFileB(fullPath.string());
+        if (!content.empty()) {
+            res.set_content(reinterpret_cast<char*>(content.data()), content.size(), getMimeType(fullPath.string()));
         } else {
             res.status = 500;
             res.set_content("Failed to read file", "text/plain");
