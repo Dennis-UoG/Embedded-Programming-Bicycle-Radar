@@ -45,7 +45,7 @@ layui.use(['table'], function(){
   var table = layui.table;
   var form = layui.form;
   
-  fetch('/framelist')
+  fetch('/picframelist')
     .then(response => response.json())
     .then(data => {
         if (data.length === 0) {

@@ -167,7 +167,7 @@ int main()
             res.set_content("File not found", "text/plain");
         }
     });
-    svr.Get("/framelist", [](const httplib::Request& req, httplib::Response& res) {
+    svr.Get("/picframelist", [](const httplib::Request& req, httplib::Response& res) {
         std::string folderPath = "./frame/";
  
         json result = json::array();
@@ -193,8 +193,35 @@ int main()
         }
         res.set_content(result.dump(), "application/json");
     });
-
-    svr.Get(R"(/.*)", [](const httplib::Request& req, httplib::Response& res) {
+    svr.Get(R"(/frame/.*)", [](const httplib::Request& req, httplib::Response& res) {
+        try{
+            std::string basePath = ".";
+            std::cout<< basePath << std::endl;
+            std::string requestedPath = req.path;
+            std::cout<<"test:"<< requestedPath << std::endl;
+            fs::path fullPath = fs::absolute(basePath + requestedPath);
+            std::cout<<"test2:"<< fullPath.string() << std::endl;
+    
+            if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
+                res.status = 404;
+                res.set_content("File not found", "text/plain");
+                return;
+            }
+        
+            std::vector<uint8_t> content = readFileB(fullPath.string());
+            if (!content.empty()) {
+                res.set_content(reinterpret_cast<char*>(content.data()), content.size(), getMimeType(fullPath.string()));
+            } else {
+                //res.status = 500;
+                res.set_content("Failed to read file", "text/plain");
+            }
+        } catch (const std::filesystem::filesystem_error& e) {
+            std::cerr << "Error resolving path: " << e.what() << std::endl;
+            //res.status = 500;
+            res.set_content("Internal server error", "text/plain");
+        }
+    });
+    svr.Get(R"(/(?!frame/).*)", [](const httplib::Request& req, httplib::Response& res) {
         std::string basePath = "./www";
         std::string requestedPath = req.path;
 
@@ -214,24 +241,7 @@ int main()
             res.set_content("Failed to read file", "text/plain");
         }
     });
-    svr.Get(R"(/frame/.*)", [](const httplib::Request& req, httplib::Response& res) {
-        std::string basePath = "./frame";
-        std::string requestedPath = req.path;
-        fs::path fullPath = fs::canonical(basePath + requestedPath);
-        if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
-            res.status = 404;
-            res.set_content("File not found", "text/plain");
-            return;
-        }
-    
-        std::vector<uint8_t> content = readFileB(fullPath.string());
-        if (!content.empty()) {
-            res.set_content(reinterpret_cast<char*>(content.data()), content.size(), getMimeType(fullPath.string()));
-        } else {
-            res.status = 500;
-            res.set_content("Failed to read file", "text/plain");
-        }
-    });
+
     std::string imu_sensor_port = "/dev/ttyUSB0";
     std::string tof_sensor_port = "/dev/ttyUSB2";
     int gpio_chip_number = 0;
