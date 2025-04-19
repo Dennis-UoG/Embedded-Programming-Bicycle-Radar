@@ -1,5 +1,3 @@
-
-
 #include "bicycle_radar/led_driver.h"
 
 
