@@ -83,7 +83,7 @@ void stop(std::vector<std::thread*> *workers, IMUSensor *imu_sensor_driver, ToFS
 std::string readFile(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << filePath << std::endl;
+        std::cout << "Failed to open file: " << filePath << std::endl;
         return "";
     }
 
@@ -92,6 +92,26 @@ std::string readFile(const std::string& filePath) {
     file.close();
 
     return buffer.str();
+}
+
+std::vector<uint8_t> readFileB(const std::string& filePath) {
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filePath << std::endl;
+        return {};
+    }
+    file.seekg(0, std::ios::end);
+    std::streamsize fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<uint8_t> buffer(fileSize);
+    if (!file.read(reinterpret_cast<char*>(buffer.data()), fileSize)) {
+        std::cerr << "Failed to read file: " << filePath << std::endl;
+        return {};
+    }
+
+    file.close();
+    return buffer;
 }
 
 std::string getMimeType(const std::string& filePath) {
@@ -126,7 +146,7 @@ int main()
             json new_data = json::parse(req.body);
             data = new_data;
             std::ofstream ofs("parameters/led_freq_dist.json");
-            ofs << data.dump(4);
+            ofs << data.dump();
             ofs.close();
 
             res.set_content("Parameters updated successfully!", "text/plain");
@@ -147,12 +167,12 @@ int main()
             res.set_content("File not found", "text/plain");
         }
     });
-    svr.Get("/framelist", [](const httplib::Request& req, httplib::Response& res) {
+    svr.Get("/picframelist", [](const httplib::Request& req, httplib::Response& res) {
         std::string folderPath = "./frame/";
  
         json result = json::array();
         if (!std::filesystem::exists(folderPath)) {
-            std::cerr << "Folder does not exist: " << folderPath << std::endl;
+            std::cout << "Folder does not exist: " << folderPath << std::endl;
             return;
         }
 
@@ -173,17 +193,39 @@ int main()
         }
         res.set_content(result.dump(), "application/json");
     });
-    svr.Get(R"(/.*)", [](const httplib::Request& req, httplib::Response& res) {
+    svr.Get(R"(/frame/.*)", [](const httplib::Request& req, httplib::Response& res) {
+        try{
+            std::string basePath = ".";
+            std::cout<< basePath << std::endl;
+            std::string requestedPath = req.path;
+            std::cout<<"test:"<< requestedPath << std::endl;
+            fs::path fullPath = fs::absolute(basePath + requestedPath);
+            std::cout<<"test2:"<< fullPath.string() << std::endl;
+    
+            if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
+                res.status = 404;
+                res.set_content("File not found", "text/plain");
+                return;
+            }
+        
+            std::vector<uint8_t> content = readFileB(fullPath.string());
+            if (!content.empty()) {
+                res.set_content(reinterpret_cast<char*>(content.data()), content.size(), getMimeType(fullPath.string()));
+            } else {
+                //res.status = 500;
+                res.set_content("Failed to read file", "text/plain");
+            }
+        } catch (const std::filesystem::filesystem_error& e) {
+            std::cerr << "Error resolving path: " << e.what() << std::endl;
+            //res.status = 500;
+            res.set_content("Internal server error", "text/plain");
+        }
+    });
+    svr.Get(R"(/(?!frame/).*)", [](const httplib::Request& req, httplib::Response& res) {
         std::string basePath = "./www";
         std::string requestedPath = req.path;
 
         fs::path fullPath = fs::canonical(basePath + requestedPath);
-
-        if (fullPath.string().find(fs::canonical(basePath).string()) != 0) {
-            res.status = 403;
-            res.set_content("Forbidden: Access outside of www directory", "text/plain");
-            return;
-        }
 
         if (!fs::exists(fullPath) || !fs::is_regular_file(fullPath)) {
             res.status = 404;
@@ -199,8 +241,10 @@ int main()
             res.set_content("Failed to read file", "text/plain");
         }
     });
+
     std::string imu_sensor_port = "/dev/IMU";
     std::string tof_sensor_port = "/dev/ToF";
+
     int gpio_chip_number = 0;
 
     std::vector<int> *gpio_pins = new std::vector<int> {20, 21, 26};

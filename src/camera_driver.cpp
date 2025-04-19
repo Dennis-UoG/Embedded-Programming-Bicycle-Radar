@@ -42,7 +42,7 @@ CameraSensor::~CameraSensor() {
 
 int CameraSensor::Run() {
     std::cout << "Camera Manager started." << std::endl;
-    clearFolder(SAVE_FOLDER_PATH);
+    //clearFolder(SAVE_FOLDER_PATH);
     Libcam2OpenCVSettings settings;
     settings.framerate = 10;
     this->camera->start();
