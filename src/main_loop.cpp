@@ -132,7 +132,7 @@ httplib::Server svr;
 
 int main() 
 {
-    std::string led_parameter_path = "/home/jz76/Embedded-Programming-Bicycle-Radar/parameters/led_freq_dist.json";
+    std::string led_parameter_path = "/home/group16/Desktop/Embedded-Programming-Bicycle-Radar/parameters/led_freq_dist.json";
 
     std::ifstream ifs(led_parameter_path);
     json data = json::parse(ifs);
@@ -242,8 +242,9 @@ int main()
         }
     });
 
-    std::string imu_sensor_port = "/dev/ttyUSB0";
-    std::string tof_sensor_port = "/dev/ttyUSB2";
+    std::string imu_sensor_port = "/dev/IMU";
+    std::string tof_sensor_port = "/dev/ToF";
+
     int gpio_chip_number = 0;
 
     std::vector<int> *gpio_pins = new std::vector<int> {20, 21, 26};
