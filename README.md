@@ -8,6 +8,7 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
 
 ![Radar System Mounted on Seat Post](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/image2.png?raw=true)
 
+📽️ [Watch the demo on Instagram](https://www.instagram.com/reel/DIrO-A3NZP_/?igsh=MWIxZWEyMno1cWNtNg==)
 
 
 ## 🌟 Features That Make You Say “Whoa!”
@@ -26,7 +27,21 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
   **`G16-raspberrypi.local:8080`**  
   — change LED distance thresholds, check saved images, and even download them.
 
+---
 
+## Development Summary
+
+Each hardware component — the IMU, ToF sensor, camera, and LED indicators — is managed by a dedicated class with clearly defined responsibilities. Interfaces are clean and intuitive, with data encapsulated using getters, setters, and event-driven callbacks. This structure allowed us to integrate features like crash detection and real-time LED feedback in a way that’s both reliable and scalable.
+
+Since the system deals with real-time sensor data, handling latency was essential. We used lightweight threading and non-blocking I/O for all time-critical components, and we designed operations like crash-triggered image capture to be as fast and responsive as possible during actual rides.
+
+System stability was a key concern throughout development. We paid close attention to memory usage, ensuring there were no leaks even under sustained operation. We ran repeated tests simulating crash events.
+
+For version control, we worked with Git using structured commits and branches for hardware integration, web development, and core logic. This made collaboration smoother and helped us track issues and improvements over time. We also maintained clear documentation to make the project easier for others to understand, use, or build upon.
+
+The IMU detects a fall, the camera captures the scene, and the image appears on the web interface almost instantly. 
+
+---
 
 # Hardware
 
@@ -205,7 +220,33 @@ from your mobile browser to (connect to a same network as the device):
 
 ![Crash Snapshot Viewer](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/8d53b3bb731af6d959f3bfb351efcc5.png?raw=true)
 
+---
 
+# 🧑‍🤝‍🧑 Division of Labor
 
+**Mengyang Dong (3027661D)**  
+- Project planning and overall system design strategy  
+- Social media content creation and promotion  
+- Backend development of the callback event architecture
 
+**Yuehua Zhang (2992646Z)**  
+- Frontend interface development  
+- IMU and ToF sensor driver implementation  
+- Contributor to the README documentation
+
+**Wenbin Zhao (3028708Z)**  
+- Project timeline management and team coordination  
+- LED and camera driver development  
+- System driver integration and debugging
+
+**Jiatong Lu (3025853L)**  
+- Bug fixing and hardware troubleshooting  
+- Hardware selection and compatibility optimization  
+- On-site system testing and debugging
+
+**Jiwei Tang (3028125T)**  
+- Hardware assembly and structural integration  
+- 3D printing and physical mounting design  
+- Power system setup and final product testing  
+- Project log maintenance and demo video production
 
