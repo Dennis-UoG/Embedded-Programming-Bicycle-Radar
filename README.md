@@ -10,7 +10,7 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
 
 ---
 
-# 🔥 Product Demonstration Video
+# 🔥 Product Demonstration Video (Social Media)
 
 🎬 **[Click here to watch our full Instagram demo! 🚴📷](https://www.instagram.com/reel/DIrO-A3NZP_/?igsh=MWIxZWEyMno1cWNtNg==)**  
 (*See the system in action during a real bike ride!*)
