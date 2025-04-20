@@ -10,7 +10,7 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
 
 ---
 
-### 🔥 Demo Preview
+# 🔥 Product Demonstration Video
 
 🎬 **[Click here to watch our full Instagram demo! 🚴📷](https://www.instagram.com/reel/DIrO-A3NZP_/?igsh=MWIxZWEyMno1cWNtNg==)**  
 (*See the system in action during a real bike ride!*)
@@ -243,7 +243,7 @@ from your mobile browser to (connect to a same network as the device):
 - Backend development of the callback event architecture
 
 **Yuehua Zhang (2992646Z)**  
-- Frontend interface development  
+- Frontend interface & communication development  
 - IMU and ToF sensor driver implementation  
 - Contributor to the README documentation
 
