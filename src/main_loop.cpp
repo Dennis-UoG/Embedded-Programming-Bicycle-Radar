@@ -132,7 +132,7 @@ httplib::Server svr;
 
 int main() 
 {
-    std::string led_parameter_path = "/home/group16/Desktop/Embedded-Programming-Bicycle-Radar/parameters/led_freq_dist.json";
+    std::string led_parameter_path = "./parameters/led_freq_dist.json";
 
     std::ifstream ifs(led_parameter_path);
     json data = json::parse(ifs);

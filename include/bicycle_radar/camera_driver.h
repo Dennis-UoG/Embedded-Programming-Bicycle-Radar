@@ -19,7 +19,7 @@
 #include <chrono>
 #include <mutex>
 
-static std::string SAVE_FOLDER_PATH = "/home/group16/Desktop/Embedded-Programming-Bicycle-Radar/frame";
+static std::string SAVE_FOLDER_PATH = "./frame";
 
 class CameraSensor {
 public:
