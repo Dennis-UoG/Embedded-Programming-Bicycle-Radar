@@ -45,9 +45,9 @@ This project utilizes a compact yet powerful hardware setup designed for real-ti
 
 ---
 
-### 🧠 IMU Module (WitMotion Gyroscope)
+### 🧠 IMU Module (WitMotion)
 
-- **Description**: A 6-axis inertial measurement unit combining a gyroscope and accelerometer, used for detecting motion and orientation.
+- **Description**: A 9-axis inertial measurement unit combining a gyroscope and accelerometer, used for detecting motion and orientation.
 - **Advantages**:
   - Real-time crash or fall detection, enhancing rider safety.
   - High sensitivity and fast response, ideal for dynamic environments.
@@ -66,13 +66,13 @@ This project utilizes a compact yet powerful hardware setup designed for real-ti
 
 ---
 
-### 📏 TF02-Pro ToF Laser Rangefinder
+### 📏 TF02-Pro ToF Laser Rangefinder (Benewake)
 
 - **Description**: A mid-range laser rangefinder based on time-of-flight (ToF) technology, capable of measuring up to 40 meters.
 - **Advantages**:
-  - **Long-distance detection** (0.1m–40m) with ±5cm to ±1% accuracy.
+  - **Long-distance detection** (0.1m–40m) with ±1% accuracy.
   - **Wide environmental adaptability**, resistant to ambient light up to 100kLux.
-  - **Fast response**: up to 1000Hz adjustable frame rate.
+  - **Fast response**: up to 100Hz adjustable frame rate.
   - **Low power consumption** (<1W), suitable for mobile and embedded applications.
 
 
