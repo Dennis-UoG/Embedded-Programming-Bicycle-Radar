@@ -130,6 +130,11 @@ std::string getMimeType(const std::string& filePath) {
 
 httplib::Server svr;
 
+/// @file main_loop.cpp
+/// @brief Contains the main application loop to manage program execution.
+/// @details This file coordinates the initialization and execution of various
+/// device drivers and callback mechanisms. It acts as the entry point for
+/// the program and orchestrates events between sensors and other components.
 int main() 
 {
     std::string led_parameter_path = "./parameters/led_freq_dist.json";

@@ -12,11 +12,22 @@
 
 #include "bicycle_radar/tof_driver.h"
 
+/// @class ToFSensor
+/// @brief Handles ToF sensor operations such as initialization, data processing, serialization, and event triggering.
+
+/// @brief Constructs the ToFSensor object.
+/// @param port The name of the serial port used to communicate with the ToF sensor.
+/// @param trigger Pointer to an EventTrigger object to handle event triggering.
 ToFSensor::ToFSensor(std::string port, EventTrigger* trigger){
     this->portName = port;
     this->eventTrigger = trigger;
 
 }
+
+/// @brief Writes sensor data to a CSV file.
+/// @param filename The name of the CSV file to write the data to.
+/// @param data A vector of StructLidar containing the sensor data.
+/// @details The function formats sensor readings into a CSV file with a header: `Temperature,Dist,Strength`.
 void ToFSensor::writeCSV(const std::string& filename, const std::vector<ToFSensor::StructLidar>& data) {
     std::ofstream file(filename);
     if (!file.is_open()) {
@@ -33,12 +44,18 @@ void ToFSensor::writeCSV(const std::string& filename, const std::vector<ToFSenso
     std::cout << "CSV file written successfully: " << filename << std::endl;
 }
 
+/// @brief Serializes StructLidar data into a string format.
+/// @param data The StructLidar object to serialize.
+/// @return A string containing serialized sensor data in the format "Temperature Dist Strength".
 std::string ToFSensor::serialize(const StructLidar &data) {
     std::ostringstream oss;
     oss << data.Temperature << " " << data.Dist << " " << data.Strength;
     return oss.str();
 }
 
+/// @brief Deserializes a string into a StructLidar object.
+/// @param data A string containing serialized sensor data in the format "Temperature Dist Strength".
+/// @return A StructLidar object populated with the deserialized data.
 ToFSensor::StructLidar ToFSensor::deserialize(const std::string& data) {
     ToFSensor::StructLidar imu;
     std::istringstream iss(data);
@@ -46,6 +63,8 @@ ToFSensor::StructLidar ToFSensor::deserialize(const std::string& data) {
     return imu;
 }
 
+/// @brief Initializes the ToF sensor and configures its serial port for communication.
+/// @return 0 if initialization is successful, 1 on error.
 int ToFSensor::Init(){
     serialPort = open(this->portName.c_str(), O_RDWR | O_NOCTTY);
     if (serialPort == -1) {
@@ -77,6 +96,10 @@ int ToFSensor::Init(){
     return 0;
 }
 
+/// @brief Main execution loop for the ToF sensor.
+/// @return 0 if the loop runs successfully, error code otherwise.
+/// @details The function reads data continuously from the ToF sensor via the serial port, parses it, and triggers events based on the data.
+/// It also stores data in a CSV file when not in debug mode.
 int ToFSensor::Run() {
     unsigned int mask  = 0;
 #ifndef DEBUG
