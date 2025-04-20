@@ -30,7 +30,53 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
 
 # Hardware
 
+This project utilizes a compact yet powerful hardware setup designed for real-time rear sensing and crash detection on bicycles. Below are the core components and their roles in the system:
 
+---
+
+### 🧩 Raspberry Pi 5
+
+- **Description**: The core computing unit for this project, running the control logic, web server, and camera interface.
+- **Advantages**:
+  - Much faster CPU and I/O bandwidth than previous versions, perfect for real-time sensor processing.
+  - Native support for multiple UART interfaces via GPIO, ideal for simultaneous IMU and ToF communication.
+  - Low power consumption with high flexibility for mobile deployments.
+  - Official CSI and GPIO support ensures full compatibility with camera and LEDs.
+
+---
+
+### 🧠 IMU Module (WitMotion Gyroscope)
+
+- **Description**: A 6-axis inertial measurement unit combining a gyroscope and accelerometer, used for detecting motion and orientation.
+- **Advantages**:
+  - Real-time crash or fall detection, enhancing rider safety.
+  - High sensitivity and fast response, ideal for dynamic environments.
+  - Lightweight and easy to integrate via UART.
+
+---
+
+### 📷 Raspberry Pi Camera Module 3 NoIR
+
+- **Description**: A 12MP camera with no IR filter, supporting autofocus and HDR, designed for high-quality image capture in all lighting conditions.
+- **Advantages**:
+  - Infrared-capable for low-light and night usage.
+  - High-speed CSI interface with Raspberry Pi.
+  - Autofocus for accurate rear snapshots after a crash.
+  - Compact and officially compatible with Raspberry Pi 5.
+
+---
+
+### 📏 TF02-Pro ToF Laser Rangefinder
+
+- **Description**: A mid-range laser rangefinder based on time-of-flight (ToF) technology, capable of measuring up to 40 meters.
+- **Advantages**:
+  - **Long-distance detection** (0.1m–40m) with ±5cm to ±1% accuracy.
+  - **Wide environmental adaptability**, resistant to ambient light up to 100kLux.
+  - **Fast response**: up to 1000Hz adjustable frame rate.
+  - **Low power consumption** (<1W), suitable for mobile and embedded applications.
+
+
+---
 
 # Building the Code & Developer Notes
 
