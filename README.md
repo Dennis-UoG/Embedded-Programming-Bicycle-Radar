@@ -8,7 +8,7 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
 
 ![Radar System Mounted on Seat Post](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/image2.png?raw=true)
 
----
+
 
 ## 🌟 Features That Make You Say “Whoa!”
 
@@ -26,11 +26,11 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
   **`G16-raspberrypi.local:8080`**  
   — change LED distance thresholds, check saved images, and even download them.
 
----
+
 
 # Hardware
 
----
+
 
 # Building the Code & Developer Notes
 
@@ -67,7 +67,7 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
 
----
+
 
 ## Build and Run the Code
 
@@ -86,11 +86,17 @@ make -j8
 
 ### Run
 
+Please move the binary file from ```build``` to the folder ```Embedded-Programming-Bicycle-Radar```
+```bash
+mv bicycle_radar ..
+cd ..
+```
+Then, run the program
 ```bash
 ./bicycle_radar
 ```
 
----
+
 
 ## Notes
 
@@ -134,7 +140,7 @@ You may obtain a copy of the License at: https://opensource.org/license/mit
 
 Enjoy!
 
----
+
 
 ## 🖼️ Web Interface Preview
 
@@ -153,7 +159,7 @@ from your mobile browser to (connect to a same network as the device):
 
 ![Crash Snapshot Viewer](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/8d53b3bb731af6d959f3bfb351efcc5.png?raw=true)
 
----
+
 
 
 
