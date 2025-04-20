@@ -8,8 +8,14 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
 
 ![Radar System Mounted on Seat Post](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/image2.png?raw=true)
 
-📽️ [Watch the demo on Instagram](https://www.instagram.com/reel/DIrO-A3NZP_/?igsh=MWIxZWEyMno1cWNtNg==)
+---
 
+### 🔥 Demo Preview
+
+🎬 **[Click here to watch our full Instagram demo! 🚴📷](https://www.instagram.com/reel/DIrO-A3NZP_/?igsh=MWIxZWEyMno1cWNtNg==)**  
+(*See the system in action during a real bike ride!*)
+
+---
 
 ## 🌟 Features That Make You Say “Whoa!”
 
@@ -48,6 +54,13 @@ The IMU detects a fall, the camera captures the scene, and the image appears on 
 This project utilizes a compact yet powerful hardware setup designed for real-time rear sensing and crash detection on bicycles. Below are the core components and their roles in the system:
 
 ---
+
+Here’s a system hardware structure:
+
+![Hardware Overview](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/hardware.png?raw=true)
+
+---
+
 
 ### 🧩 Raspberry Pi 5
 
