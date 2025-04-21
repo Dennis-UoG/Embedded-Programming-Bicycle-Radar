@@ -39,13 +39,13 @@ Here's how the PiBike Radar looks when mounted on a bike seat post:
 
 Each hardware component — the IMU, ToF sensor, camera, and LED indicators — is managed by a dedicated class with clearly defined responsibilities. Interfaces are clean and intuitive, with data encapsulated using getters, setters, and event-driven callbacks. This structure allowed us to integrate features like crash detection and real-time LED feedback in a way that’s both reliable and scalable.
 
-Since the system deals with real-time sensor data, handling latency was essential. We used lightweight threading and non-blocking I/O for all time-critical components, and we designed operations like crash-triggered image capture to be as fast and responsive as possible during actual rides.
+Since the system deals with real-time sensor data, handling latency was essential. We used lightweight threading and blocking I/O for all time-critical components, and we designed operations like crash-triggered image capture to be as fast and responsive as possible during actual rides.
 
 System stability was a key concern throughout development. We paid close attention to memory usage, ensuring there were no leaks even under sustained operation. We ran repeated tests simulating crash events.
 
 For version control, we worked with Git using structured commits and branches for hardware integration, web development, and core logic. This made collaboration smoother and helped us track issues and improvements over time. We also maintained clear documentation to make the project easier for others to understand, use, or build upon.
 
-The IMU detects a fall, the camera captures the scene, and the image appears on the web interface almost instantly. 
+The IMU detects a fall, the camera captures the scene, and the image appears on the web interface almost instantly(10ms). 
 
 ---
 
@@ -53,13 +53,6 @@ The IMU detects a fall, the camera captures the scene, and the image appears on 
 
 This project utilizes a compact yet powerful hardware setup designed for real-time rear sensing and crash detection on bicycles. Below are the core components and their roles in the system:
 
----
-
-Here’s a system hardware structure:
-
-![Hardware Overview](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/hardware.png?raw=true)
-
----
 
 
 ### 🧩 Raspberry Pi 5
@@ -71,7 +64,6 @@ Here’s a system hardware structure:
   - Low power consumption with high flexibility for mobile deployments.
   - Official CSI and GPIO support ensures full compatibility with camera and LEDs.
 
----
 
 ### 🧠 IMU Module (WitMotion)
 
@@ -81,7 +73,6 @@ Here’s a system hardware structure:
   - High sensitivity and fast response, ideal for dynamic environments.
   - Lightweight and easy to integrate via UART.
 
----
 
 ### 📷 Raspberry Pi Camera Module 3 NoIR
 
@@ -92,7 +83,6 @@ Here’s a system hardware structure:
   - Autofocus for accurate rear snapshots after a crash.
   - Compact and officially compatible with Raspberry Pi 5.
 
----
 
 ### 📏 TF02-Pro ToF Laser Rangefinder (Benewake)
 
@@ -103,6 +93,13 @@ Here’s a system hardware structure:
   - **Fast response**: up to 100Hz adjustable frame rate.
   - **Low power consumption** (<1W), suitable for mobile and embedded applications.
 
+
+---
+
+
+Here’s a system hardware structure:
+
+![Hardware Overview](https://github.com/Dennis-UoG/Embedded-Programming-Bicycle-Radar/blob/Discussion/hardware.png?raw=true)
 
 ---
 
