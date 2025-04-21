@@ -1,0 +1,61 @@
+以下是一个适用于C++项目的常用 `.gitignore` 文件内容：
+# 忽略编译生成的文件
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+*.dll
+*.lib
+*.dylib
+
+# 忽略IDE和构建系统生成的文件
+.vs/
+.github/
+.vscode/
+.idea/
+cmake-build-*/
+build/
+Debug/
+Release/
+x64/
+x86/
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.sdf
+*.opensdf
+*.pdb
+*.idb
+*.ilk
+*.log
+*.tlog
+*.lastbuildstate
+*.db
+*.ipch
+
+# 忽略CMake生成的文件
+CMakePresets.json
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+install_manifest.txt
+CTestTestfile.cmake
+Testing/
+
+# 忽略依赖目录
+deps/
+third_party/
+
+# 忽略日志和临时文件
+*.log
+*.tmp
+
+# 忽略测试相关文件
+test_results/
+*.gcno
+*.gcda
+coverage/
